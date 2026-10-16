@@ -1,1 +1,336 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mis órdenes y documentos | Salud en Orden</title><script src="https://cdn.tailwindcss.com"></script><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><style>body{font-family:Inter,Arial,sans-serif;background:#f7f9fb;color:#172033}</style></head><body class="min-h-screen"><header class="bg-white border-b p-4"><div class="max-w-5xl mx-auto flex flex-wrap gap-4 items-center justify-between"><div><h1 class="text-2xl font-bold text-blue-900">Salud en Orden</h1><p class="text-sm text-slate-500">Seguimiento personal de salud</p></div><nav class="flex flex-wrap gap-3 text-sm"><a class="text-blue-800" href="index.html">Inicio</a><a class="text-blue-800" href="medicamentos.html">Medicamentos</a><a class="text-blue-800" href="calendario.html">Calendario</a><a class="text-blue-800" href="autorizaciones.html">Órdenes</a><a class="text-blue-800" href="ajustes.html">Ajustes</a></nav></div></header><main class="max-w-5xl mx-auto p-5"><h2 class="text-3xl font-bold mb-2">Mis órdenes y documentos</h2><p class="text-slate-600">Organiza tus órdenes médicas, autorizaciones y documentos de salud.</p><div id="page-content"></div></main><script src="app.js" defer></script></body></html>
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Authorizations - Salud en Orden</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Atkinson+Hyperlegible+Next:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#a3f69c",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-surface": "#191c1e",
+                        "background": "#f7f9fb",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#434652",
+                        "tertiary-container": "#404e57",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#b0c6ff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#005312",
+                        "secondary": "#1b6d24",
+                        "primary": "#003178",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-fixed": "#0f1d25",
+                        "tertiary-fixed": "#d6e5ef",
+                        "outline": "#737783",
+                        "surface-tint": "#2b5bb5",
+                        "surface-dim": "#d8dadc",
+                        "tertiary": "#293740",
+                        "on-primary-container": "#a1bbff",
+                        "on-primary-fixed-variant": "#00429c",
+                        "outline-variant": "#c3c6d4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#88d982",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "on-secondary-fixed": "#002204",
+                        "surface-bright": "#f7f9fb",
+                        "surface": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary-fixed": "#001945",
+                        "on-tertiary-fixed-variant": "#3b4951",
+                        "primary-container": "#0d47a1",
+                        "on-tertiary-container": "#b0bfc9",
+                        "on-secondary-container": "#217128",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#bac9d3",
+                        "secondary-container": "#a0f399",
+                        "primary-fixed": "#d9e2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "stack-sm": "4px",
+                        "section-gap": "40px",
+                        "stack-lg": "24px",
+                        "stack-md": "12px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Atkinson Hyperlegible Next"],
+                        "label-sm": ["Atkinson Hyperlegible Next"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col h-screen py-base bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant h-screen w-64 fixed left-0 top-0 transition-all duration-200 ease-in-out z-40">
+<div class="px-4 py-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Salud en Orden</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Clinical Portal</p>
+</div>
+<div class="flex-1 flex flex-col gap-2 mt-4 px-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-highest dark:hover:bg-tertiary-container transition-colors cursor-pointer active:opacity-80" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-highest dark:hover:bg-tertiary-container transition-colors cursor-pointer active:opacity-80" href="medicamento.html">
+<span class="material-symbols-outlined">medication</span>
+<span class="font-label-md text-label-md">Medications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-highest dark:hover:bg-tertiary-container transition-colors cursor-pointer active:opacity-80" href="calendario.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-md text-label-md">calendario</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary cursor-pointer active:opacity-80" href="autorizaciones.html">
+<span class="material-symbols-outlined" data-weight="fill">verified</span>
+<span class="font-label-md text-label-md">Authorizaciones</span>
+</a>
+</div>
+<div class="px-4 py-4 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 bg-error-container text-on-error-container py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">emergency</span>
+                Emergency Contact
+            </button>
+</div>
+<div class="mt-4 px-2 flex flex-col gap-2 pb-4">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-highest dark:hover:bg-tertiary-container transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-highest dark:hover:bg-tertiary-container transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-container-padding h-16 w-full bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows">
+<div class="flex items-center gap-4 lg:hidden">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Salud en Orden</h2>
+</div>
+<div class="hidden lg:flex items-center bg-surface-container rounded-full px-4 py-2 w-96 border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md font-body-md text-on-surface outline-none" placeholder="Search authorizations..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-colors rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-colors rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="ml-2 hidden sm:flex items-center gap-2 bg-primary-container text-white px-4 py-2 rounded-full font-label-md text-label-md hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Appointment
+                </button>
+<img alt="User medical profile photo" class="w-8 h-8 rounded-full ml-4 object-cover border border-outline-variant" data-alt="A professional headshot of a healthcare provider, smiling warmly, wearing a white coat, isolated on a clean light blue background. High resolution, modern medical context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFeBsUa2ArJk3A1mu5_5S92ErhynWIurty11ZwBKfYJikwzxdtTPoYM18o4Xdz5W_Z9uFWxSJADGMvt3CBBnF7fN2y-7pXlYBgHt7qGl46p2groHP3HbJC8mj1-5RmeGOYzwpeLNI1Pp20jq7MWHk_IoiMCP_IFF4k-Km0oTO5ZbTkqrx_oZgmxAwG_QOJ98XaqZBBUYnot1L7Zp-CMgl-LUSkXUmw9cEk19bHnxH-aXt0nYHEvIKn"/>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-container-padding max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-section-gap gap-4">
+<div>
+<h1 class="font-display text-display text-on-surface mb-2">Authorizations Tracker</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Monitor and manage your medical authorization requests.</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg border border-outline-variant">
+<button class="px-4 py-2 rounded font-label-md text-label-md bg-white shadow-sm text-primary font-bold">Active</button>
+<button class="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Completed</button>
+<button class="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">priority_high</span> Urgent
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- Summary Card -->
+<div class="md:col-span-4 bg-white rounded-xl border border-surface-variant p-6 shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Status Overview</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span> Approved
+                                </span>
+<span class="font-headline-md text-headline-md text-on-surface">12</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-amber-500"></span> In Review
+                                </span>
+<span class="font-headline-md text-headline-md text-on-surface">5</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-surface-variant"></span> Submitted
+                                </span>
+<span class="font-headline-md text-headline-md text-on-surface">3</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-variant">
+<button class="w-full flex items-center justify-center gap-2 bg-secondary-container text-on-secondary-container py-2 rounded-lg font-label-md text-label-md hover:bg-secondary hover:text-white transition-colors">
+<span class="material-symbols-outlined">call</span>
+                            Contact Insurance
+                        </button>
+</div>
+</div>
+<!-- Main List Area -->
+<div class="md:col-span-8 flex flex-col gap-4">
+<!-- Card 1: In Review -->
+<div class="bg-white rounded-xl border border-surface-variant p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-amber-100 text-amber-800 text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> In Review
+                                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29481</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">MRI Lumbar Spine</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Sarah Jenkins (Orthopedics)</p>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Submitted on</p>
+<p class="font-body-md text-body-md text-on-surface">Oct 12, 2023</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-4">
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
+<span>Submitted</span>
+<span class="text-amber-600 font-bold">Reviewing</span>
+<span>Decision</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-amber-500 h-2 rounded-full" style="width: 50%"></div>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-2 text-right">Est. decision: Oct 19</p>
+</div>
+</div>
+<!-- Card 2: Submitted (Urgent) -->
+<div class="bg-white rounded-xl border border-error-container p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-surface-container-high text-on-surface-variant text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span> Submitted
+                                    </span>
+<span class="bg-error-container text-on-error-container text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Urgent
+                                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29482</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Stat CT Head w/o Contrast</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Alan Grant (Neurology)</p>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Submitted on</p>
+<p class="font-body-md text-body-md text-on-surface">Oct 14, 2023</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-4">
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
+<span class="text-on-surface font-bold">Submitted</span>
+<span>Reviewing</span>
+<span>Decision</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-on-surface-variant h-2 rounded-full" style="width: 15%"></div>
+</div>
+</div>
+</div>
+<!-- Card 3: Approved -->
+<div class="bg-white rounded-xl border border-surface-variant p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group opacity-80">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-secondary-container text-on-secondary-container text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Approved
+                                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29300</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Physical Therapy (12 Sessions)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Emily Chen (Sports Med)</p>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Decision Date</p>
+<p class="font-body-md text-body-md text-on-surface">Oct 10, 2023</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-4">
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
+<span>Submitted</span>
+<span>Reviewing</span>
+<span class="text-secondary font-bold">Approved</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
