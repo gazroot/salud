@@ -3,7 +3,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Medication Management - Salud en Orden</title>
+<title>Gestión de medicamentos - Salud en Orden</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@500;600&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -118,7 +118,7 @@
 <span class="material-symbols-outlined">dashboard</span>
 <span class="font-label-md text-label-md">inicio</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary-container text-on-secondary-container transition-all duration-200 ease-in-out" href="medicamentos.html">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary-container text-on-secondary-container transition-all duration-200 ease-in-out" href="medicamento.html">
 <span class="material-symbols-outlined icon-fill">medication</span>
 <span class="font-label-md text-label-md font-bold">Medicamentos</span>
 </a>
@@ -175,213 +175,12 @@
 </div>
 </header>
 <!-- Canvas -->
-<main class="flex-1 p-container-padding overflow-y-auto">
-<!-- Page Header -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-stack-lg gap-4">
-<div>
-<h1 class="font-display text-display text-primary">Medication Management</h1>
-<p class="font-body-md text-body-md text-on-surface-variant mt-2">Track, manage, and record daily doses.</p>
-</div>
-<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity shadow-sm min-h-[48px]" onclick="document.getElementById('add-med-modal').classList.remove('hidden')">
-<span class="material-symbols-outlined">add</span>
-                    Add Medication
-                </button>
-</div>
-<!-- Dashboard Content Grid -->
-<div class="grid grid-cols-1 xl:grid-cols-12 gap-stack-lg">
-<!-- Main Medication List -->
-<div class="xl:col-span-8 flex flex-col gap-stack-md">
-<h2 class="font-headline-md text-headline-md text-on-surface">Today's Schedule</h2>
-<!-- Morning Block -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-2 h-full bg-surface-tint"></div>
-<div class="flex items-start justify-between mb-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-surface-tint icon-fill">light_mode</span>
-<h3 class="font-headline-md text-headline-md text-on-surface">Morning</h3>
-<span class="text-on-surface-variant font-body-md text-body-md ml-2">8:00 AM</span>
-</div>
-</div>
-<div class="flex flex-col gap-4">
-<!-- Med Item 1 (Pending) -->
-<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low border border-surface-variant">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-surface-variant">pill</span>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface font-bold text-lg">Lisinopril</h4>
-<p class="font-body-md text-body-md text-on-surface-variant">10mg • 1 tablet with food</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-label-sm text-label-sm flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-amber-600"></span> Pending
-                                    </span>
-<button class="bg-[#E3F2FD] text-[#0D47A1] font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-tint hover:text-white transition-colors min-h-[48px] min-w-[100px]">
-                                        Mark Taken
-                                    </button>
-</div>
-</div>
-<!-- Med Item 2 (Taken) -->
-<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low border border-surface-variant opacity-75">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-surface-variant">water_drop</span>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface font-bold text-lg line-through">Metformin</h4>
-<p class="font-body-md text-body-md text-on-surface-variant">500mg • 1 tablet</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-label-sm text-label-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">check_circle</span> Taken
-                                    </span>
-</div>
-</div>
-</div>
-</div>
-<!-- Evening Block -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 relative overflow-hidden group mt-4">
-<div class="absolute top-0 left-0 w-2 h-full bg-tertiary"></div>
-<div class="flex items-start justify-between mb-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-tertiary icon-fill">dark_mode</span>
-<h3 class="font-headline-md text-headline-md text-on-surface">Evening</h3>
-<span class="text-on-surface-variant font-body-md text-body-md ml-2">8:00 PM</span>
-</div>
-</div>
-<div class="flex flex-col gap-4">
-<!-- Med Item 3 (Upcoming) -->
-<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low border border-surface-variant">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-surface-variant">prescriptions</span>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface font-bold text-lg">Atorvastatin</h4>
-<p class="font-body-md text-body-md text-on-surface-variant">20mg • 1 tablet before bed</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="px-3 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-label-sm">
-                                        Upcoming
-                                    </span>
-<button class="bg-[#E3F2FD] text-[#0D47A1] font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-tint hover:text-white transition-colors min-h-[48px] min-w-[100px] opacity-50 cursor-not-allowed">
-                                        Mark Taken
-                                    </button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Right Sidebar (Vitals/Summary) -->
-<div class="xl:col-span-4 flex flex-col gap-stack-md">
-<!-- Adherence Card -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col items-center text-center">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2 w-full text-left">Weekly Adherence</h3>
-<div class="relative w-32 h-32 mt-4">
-<!-- Simple pure CSS circle progress approximation for demo -->
-<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
-<circle class="text-surface-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="12"></circle>
-<circle class="text-[#2E7D32]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="37.68" stroke-width="12"></circle>
-</svg>
-<div class="absolute inset-0 flex items-center justify-center flex-col">
-<span class="font-display text-display text-[#2E7D32] leading-none">85%</span>
-</div>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant mt-4">Great job! You've taken 17 of 20 scheduled doses this week.</p>
-</div>
-<!-- Pharmacy Info -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">local_pharmacy</span>
-                            Primary Pharmacy
-                        </h3>
-<div class="font-body-md text-body-md text-on-surface">
-<p class="font-bold">Walgreens #1234</p>
-<p class="text-on-surface-variant text-sm mt-1">123 Main St, Anytown USA</p>
-<p class="text-on-surface-variant text-sm">(555) 123-4567</p>
-</div>
-<button class="mt-4 w-full py-2 border border-outline-variant rounded-lg text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors">
-                            Request Refill
-                        </button>
-</div>
-</div>
-</div>
-</main>
+<main class="flex-1 p-container-padding overflow-y-auto"><div class="max-w-5xl mx-auto py-6"><h1 class="font-display text-3xl font-bold text-primary mb-2">Gestión de medicamentos</h1><p class="text-base text-slate-600 mb-5">Registra y consulta los medicamentos indicados por tu profesional de salud.</p><p class="text-sm text-slate-500 mb-4" id="salud-db-status" role="status">La lista se cargará desde tu cuenta privada de Supabase cuando hayas iniciado sesión.</p></div></main>
 </div>
 <!-- Add Medication Modal (Hidden by default) -->
-<div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" id="add-med-modal">
-<!-- Backdrop -->
-<div class="absolute inset-0 bg-inverse-surface/50 backdrop-blur-sm" onclick="document.getElementById('add-med-modal').classList.add('hidden')"></div>
-<!-- Modal Content -->
-<div class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] border border-outline-variant flex flex-col max-h-[921px]">
-<div class="p-6 border-b border-outline-variant flex justify-between items-center">
-<h2 class="font-headline-lg text-headline-lg text-on-surface">Add New Medication</h2>
-<button class="text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('add-med-modal').classList.add('hidden')">
-<span class="material-symbols-outlined">close</span>
-</button>
-</div>
-<div class="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Medication Name</label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md transition-all outline-none" placeholder="e.g. Amoxicillin" type="text"/>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Dosage</label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md transition-all outline-none" placeholder="e.g. 250mg" type="text"/>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Form</label>
-<select class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md transition-all outline-none bg-transparent">
-<option>Tablet</option>
-<option>Capsule</option>
-<option>Liquid</option>
-<option>Injection</option>
-</select>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Frequency</label>
-<div class="flex gap-2 mt-2">
-<button class="flex-1 py-2 border border-primary bg-[#E3F2FD] text-primary rounded-lg font-label-sm text-label-sm">Daily</button>
-<button class="flex-1 py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-sm text-label-sm">As Needed</button>
-<button class="flex-1 py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-sm text-label-sm">Custom</button>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Schedule Times</label>
-<div class="flex gap-2 flex-wrap mt-2">
-<label class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
-<input checked="" class="rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
-<span class="font-body-md text-body-md">Morning</span>
-</label>
-<label class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
-<input class="rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
-<span class="font-body-md text-body-md">Noon</span>
-</label>
-<label class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
-<input checked="" class="rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
-<span class="font-body-md text-body-md">Evening</span>
-</label>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface mb-1">Instructions (Optional)</label>
-<textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md transition-all outline-none resize-none" placeholder="e.g. Take with food" rows="2"></textarea>
-</div>
-</div>
-<div class="p-6 border-t border-outline-variant flex justify-end gap-3 bg-surface-container-lowest rounded-b-xl">
-<button class="px-6 py-3 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors min-h-[48px]" onclick="document.getElementById('add-med-modal').classList.add('hidden')">
-                    Cancel
-                </button>
-<button class="px-6 py-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity min-h-[48px]">
-                    Save Medication
-                </button>
-</div>
-</div>
-</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script defer="" src="auth.js"></script>
+<script defer="" src="app.js"></script>
 </body></html>

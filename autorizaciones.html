@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Authorizations - Salud en Orden</title>
+<title>Órdenes y autorizaciones - Salud en Orden</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Atkinson+Hyperlegible+Next:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -181,156 +181,10 @@
 </div>
 </header>
 <!-- Canvas -->
-<main class="flex-1 p-container-padding max-w-7xl mx-auto w-full">
-<!-- Header Section -->
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-section-gap gap-4">
-<div>
-<h1 class="font-display text-display text-on-surface mb-2">Authorizations Tracker</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Monitor and manage your medical authorization requests.</p>
+<main class="flex-1 p-container-padding max-w-7xl mx-auto w-full"><div class="max-w-5xl mx-auto py-6"><h1 class="font-display text-3xl font-bold text-primary mb-2">Órdenes y autorizaciones</h1><p class="text-base text-slate-600 mb-5">Organiza tus órdenes médicas y solicitudes de autorización.</p><p class="text-sm text-slate-500 mb-4" id="salud-db-status" role="status">Tus registros se cargarán desde Supabase. Esta versión guarda los datos de la orden, pero no sube archivos adjuntos.</p></div></main>
 </div>
-<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg border border-outline-variant">
-<button class="px-4 py-2 rounded font-label-md text-label-md bg-white shadow-sm text-primary font-bold">Active</button>
-<button class="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Completed</button>
-<button class="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors text-error flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]">priority_high</span> Urgent
-                    </button>
-</div>
-</div>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
-<!-- Summary Card -->
-<div class="md:col-span-4 bg-white rounded-xl border border-surface-variant p-6 shadow-sm flex flex-col justify-between">
-<div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Status Overview</h3>
-<div class="space-y-4">
-<div class="flex justify-between items-center">
-<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-secondary"></span> Approved
-                                </span>
-<span class="font-headline-md text-headline-md text-on-surface">12</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-amber-500"></span> In Review
-                                </span>
-<span class="font-headline-md text-headline-md text-on-surface">5</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-surface-variant"></span> Submitted
-                                </span>
-<span class="font-headline-md text-headline-md text-on-surface">3</span>
-</div>
-</div>
-</div>
-<div class="mt-6 pt-4 border-t border-surface-variant">
-<button class="w-full flex items-center justify-center gap-2 bg-secondary-container text-on-secondary-container py-2 rounded-lg font-label-md text-label-md hover:bg-secondary hover:text-white transition-colors">
-<span class="material-symbols-outlined">call</span>
-                            Contact Insurance
-                        </button>
-</div>
-</div>
-<!-- Main List Area -->
-<div class="md:col-span-8 flex flex-col gap-4">
-<!-- Card 1: In Review -->
-<div class="bg-white rounded-xl border border-surface-variant p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
-<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="bg-amber-100 text-amber-800 text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> In Review
-                                    </span>
-<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29481</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface">MRI Lumbar Spine</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Sarah Jenkins (Orthopedics)</p>
-</div>
-<div class="text-right">
-<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Submitted on</p>
-<p class="font-body-md text-body-md text-on-surface">Oct 12, 2023</p>
-</div>
-</div>
-<!-- Progress Bar -->
-<div class="mt-4">
-<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
-<span>Submitted</span>
-<span class="text-amber-600 font-bold">Reviewing</span>
-<span>Decision</span>
-</div>
-<div class="w-full bg-surface-variant rounded-full h-2">
-<div class="bg-amber-500 h-2 rounded-full" style="width: 50%"></div>
-</div>
-<p class="text-label-sm font-label-sm text-on-surface-variant mt-2 text-right">Est. decision: Oct 19</p>
-</div>
-</div>
-<!-- Card 2: Submitted (Urgent) -->
-<div class="bg-white rounded-xl border border-error-container p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
-<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="bg-surface-container-high text-on-surface-variant text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span> Submitted
-                                    </span>
-<span class="bg-error-container text-on-error-container text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">priority_high</span> Urgent
-                                    </span>
-<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29482</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Stat CT Head w/o Contrast</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Alan Grant (Neurology)</p>
-</div>
-<div class="text-right">
-<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Submitted on</p>
-<p class="font-body-md text-body-md text-on-surface">Oct 14, 2023</p>
-</div>
-</div>
-<!-- Progress Bar -->
-<div class="mt-4">
-<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
-<span class="text-on-surface font-bold">Submitted</span>
-<span>Reviewing</span>
-<span>Decision</span>
-</div>
-<div class="w-full bg-surface-variant rounded-full h-2">
-<div class="bg-on-surface-variant h-2 rounded-full" style="width: 15%"></div>
-</div>
-</div>
-</div>
-<!-- Card 3: Approved -->
-<div class="bg-white rounded-xl border border-surface-variant p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group opacity-80">
-<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
-<div class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="bg-secondary-container text-on-secondary-container text-[12px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">check_circle</span> Approved
-                                    </span>
-<span class="text-label-sm font-label-sm text-on-surface-variant">Auth #AUTH-29300</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Physical Therapy (12 Sessions)</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Requested by Dr. Emily Chen (Sports Med)</p>
-</div>
-<div class="text-right">
-<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Decision Date</p>
-<p class="font-body-md text-body-md text-on-surface">Oct 10, 2023</p>
-</div>
-</div>
-<!-- Progress Bar -->
-<div class="mt-4">
-<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-2">
-<span>Submitted</span>
-<span>Reviewing</span>
-<span class="text-secondary font-bold">Approved</span>
-</div>
-<div class="w-full bg-surface-variant rounded-full h-2">
-<div class="bg-secondary h-2 rounded-full" style="width: 100%"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script defer="" src="auth.js"></script>
+<script defer="" src="app.js"></script>
 </body></html>

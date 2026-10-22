@@ -1,37 +1,41 @@
-# Configuración de Salud en Orden con Supabase y GitHub Pages
+# Salud en Orden — conectar a Supabase y GitHub Pages
 
-## 1. Pegar la clave publicable
-1. En Supabase abre **Project Settings → API Keys** (o **Connect**).
-2. Copia la **Publishable key** (`sb_publishable_...`). No copies `service_role` ni ninguna secret key.
-3. Abre `supabase-config.js` y reemplaza `PEGA_AQUI_TU_CLAVE_PUBLICABLE` por esa clave. La Project URL ya está configurada.
+## 1. Configura la clave publicable
 
-## 2. Configurar Auth en Supabase
-En **Authentication → URL Configuration** establece:
-- **Site URL:** `https://gazroot.github.io/salud/`
-- **Redirect URLs:** agrega `https://gazroot.github.io/salud/**`
+Abre `supabase-config.js` y reemplaza `PEGA_AQUI_TU_CLAVE_PUBLICABLE` por la clave **Publishable** del proyecto `https://tumhcmhxmaburercohou.supabase.co`. En Supabase está en Project Settings → API Keys o Connect. Usa solo la clave publicable (`sb_publishable_...` o la clave `anon` pública legacy si ese panel la ofrece). **Nunca uses `service_role`, `sb_secret_...` ni la contraseña de la base de datos.**
 
-En **Authentication → Sign In / Providers → Email**, confirma que Email está habilitado. Para uso personal, deja habilitada la confirmación por correo. El correo de prueba de Supabase tiene límites; si los correos no llegan, revisa el proveedor/SMTP.
+## 2. Configura Authentication
 
-## 3. Publicar en GitHub Pages
-Sube todos los archivos de esta carpeta a la raíz del repositorio `salud` (no subas solo `index.html`). En GitHub, abre **Settings → Pages** y confirma la rama/carpeta publicada. La URL esperada es `https://gazroot.github.io/salud/`.
+En Supabase → Authentication → URL Configuration:
+- Site URL: `https://gazroot.github.io/salud/`
+- Redirect URLs: `https://gazroot.github.io/salud/**`
 
-## 4. Probar
-1. Abre `https://gazroot.github.io/salud/login.html`.
-2. Crea una cuenta con tu correo y una contraseña única de al menos 10 caracteres.
-3. Confirma el correo si Supabase lo solicita y vuelve a iniciar sesión.
-4. Abre **Mis registros**, guarda un registro de prueba y verifica en Supabase Table Editor que aparece asociado a tu usuario.
-5. Inicia sesión desde el otro dispositivo y comprueba que ves el mismo registro.
+En Authentication → Sign In / Providers, habilita Email. Puedes mantener Confirm email activado.
 
-## Archivos principales
-- `login.html`: inicio de sesión, registro y solicitud de recuperación.
-- `recuperar-clave.html`: formulario para cambiar contraseña desde el enlace de correo.
+## 3. Publica
+
+Sube el contenido de esta carpeta `salud-main` a la raíz del repositorio GitHub `salud` (no subas solo el ZIP). Conserva los archivos HTML actualizados. En Settings → Pages, confirma que Pages publique desde la rama/carpeta que contiene `index.html`.
+
+## 4. Archivos principales
+- `login.html`: registro, inicio de sesión y solicitud de recuperación.
+- `recuperar-clave.html`: establece nueva contraseña tras el enlace de correo.
 - `supabase-config.js`: URL y clave publicable.
-- `auth.js`: sesión, cierre de sesión y protección de las páginas.
-- `registros.html` / `registros.js`: formularios y consultas a las cinco tablas.
+- `auth.js`: protege las páginas principales con sesión Supabase.
+- `app.js`: CRUD de medidas, citas, medicamentos, órdenes y perfil usando Supabase.
 
-## Seguridad
-- Las tablas deben tener RLS habilitado y políticas por `auth.uid()` (las políticas creadas en el paso anterior).
-- Nunca publiques `service_role`, `sb_secret_...` ni la contraseña de la base de datos.
-- La protección de páginas en JavaScript mejora la experiencia, pero la seguridad real de los datos depende de RLS en Supabase.
-- Los paneles heredados aún contienen algunos bloques visuales de ejemplo; el aviso del dashboard lo indica. Usa Mis registros para guardar información real.
-- Esta versión no sube archivos adjuntos ni envía recordatorios médicos. No introduzcas datos sensibles reales hasta verificar el acceso y RLS con una cuenta de prueba.
+## 5. Tablas esperadas
+`perfiles`, `medidas_salud`, `citas`, `medicamentos`, `ordenes_salud`. Este proyecto espera las columnas creadas en el SQL inicial de Salud en Orden y RLS activado. Cada tabla de registros debe tener `usuario_id` con `default auth.uid()` y las políticas RLS que limitan las filas al usuario autenticado.
+
+## 6. Prueba segura
+1. Abre `https://gazroot.github.io/salud/login.html`.
+2. Registra una cuenta con un correo que controles y confirma el correo si se solicita.
+3. Inicia sesión.
+4. Crea una medida de prueba sin información médica real, recarga y verifica que aparezca.
+5. Abre la misma URL en otro dispositivo e inicia sesión con la misma cuenta.
+6. Verifica que solo aparezcan tus registros.
+
+## Nota importante
+Las páginas HTML originales contienen tarjetas de demostración estáticas que forman parte del diseño. Las secciones añadidas con el título “Mis datos guardados en la nube” o similares sí leen/escriben en Supabase. Antes de usar datos de salud reales, verifica RLS, autenticación, recuperación de contraseña y privacidad. Los documentos adjuntos aún no se suben a Storage; esta versión guarda sus metadatos.
+
+
+Nota de esta revisión: las páginas medicamento.html y autorizaciones.html se limpiaron de datos de demostración. Sus listas y formularios los genera app.js usando las tablas medicamentos y ordenes_salud de Supabase.
