@@ -18,7 +18,7 @@
             --surface-container: #ecedef;
         }
     </style>
-    <script src="https://google.com" async defer></script>
+
 </head>
 <body class="flex min-h-screen">
 <!-- Menú Lateral -->
@@ -31,9 +31,12 @@
 <a class="flex items-center gap-3 px-4 py-3 text-[#0d47a1] bg-[#e3f2fd] rounded-lg font-medium" href="index.html">
 <span class="material-icons">dashboard</span> Dashboard
             </a>
-<a class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="medicamento.html">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="medicamentos.html">
 <span class="material-icons">medication</span> Medicamentos
             </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="registros.html">
+<span class="material-icons">monitor_heart</span> Mis registros
+</a>
 <a class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="calendario.html">
 <span class="material-icons">calendar_month</span> Calendario
             </a>
@@ -90,6 +93,7 @@
 </div>
 </nav>
 <!-- Contenido -->
+<div class="mx-4 mt-4 lg:mx-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">El diseño original contiene algunos datos de muestra. Para registrar y consultar tus datos reales sincronizados, utiliza <a class="font-bold underline" href="registros.html">Mis registros</a>.</div>
 <div class="p-8 max-w-6xl mx-auto">
 <header class="mb-8">
 <h2 class="text-3xl font-bold text-gray-900">buenos dias, ("inserte nombre aqui")</h2>
@@ -206,6 +210,9 @@
 </div>
 </div>
 </main>
-<script src="app.js" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
+<script defer src="auth.js"></script>
 </body>
 </html>
