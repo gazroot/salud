@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d47a1"><title>Acceso | Salud en Orden</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script><script defer src="auth.js"></script>
+</head>
+<body class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <main class="w-full max-w-md bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8">
+    <div class="text-center mb-6"><div class="mx-auto mb-3 w-14 h-14 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center text-2xl">♥</div><h1 class="text-2xl font-bold text-blue-900">Salud en Orden</h1><p class="text-slate-500 mt-1">Tu seguimiento personal de salud</p></div>
+    <div class="flex gap-2 mb-5"><button data-show-panel="signin-panel" class="flex-1 rounded-lg bg-blue-800 text-white py-2 font-semibold">Iniciar sesión</button><button data-show-panel="signup-panel" class="flex-1 rounded-lg bg-slate-100 text-slate-700 py-2 font-semibold">Crear cuenta</button></div>
+    <section id="signin-panel" data-auth-panel>
+      <form id="signin-form" class="space-y-4"><label class="block text-sm font-medium">Correo electrónico<input required type="email" name="email" autocomplete="email" class="mt-1 w-full rounded-lg border-slate-300" placeholder="tu@correo.com"></label><label class="block text-sm font-medium">Contraseña<input required type="password" name="password" autocomplete="current-password" class="mt-1 w-full rounded-lg border-slate-300" placeholder="Tu contraseña"></label><button class="w-full rounded-lg bg-blue-800 text-white py-3 font-semibold hover:bg-blue-900" type="submit">Entrar</button></form>
+      <button data-show-panel="reset-panel" class="mt-4 text-sm text-blue-800 underline">Olvidé mi contraseña</button>
+    </section>
+    <section id="signup-panel" data-auth-panel hidden>
+      <form id="signup-form" class="space-y-4"><label class="block text-sm font-medium">Correo electrónico<input required type="email" name="email" autocomplete="email" class="mt-1 w-full rounded-lg border-slate-300"></label><label class="block text-sm font-medium">Contraseña (mínimo 10 caracteres)<input required minlength="10" type="password" name="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border-slate-300"></label><label class="block text-sm font-medium">Confirmar contraseña<input required minlength="10" type="password" name="confirmPassword" autocomplete="new-password" class="mt-1 w-full rounded-lg border-slate-300"></label><button class="w-full rounded-lg bg-blue-800 text-white py-3 font-semibold" type="submit">Crear cuenta</button></form>
+      <p class="text-xs text-slate-500 mt-3">Usa una contraseña única. Si se solicita confirmación, revisa tu correo antes de entrar.</p>
+    </section>
+    <section id="reset-panel" data-auth-panel hidden><form id="reset-form" class="space-y-4"><p class="text-sm text-slate-600">Te enviaremos un enlace para restablecer la contraseña.</p><label class="block text-sm font-medium">Correo electrónico<input required type="email" name="email" autocomplete="email" class="mt-1 w-full rounded-lg border-slate-300"></label><button class="w-full rounded-lg bg-blue-800 text-white py-3 font-semibold" type="submit">Enviar enlace</button></form><button data-show-panel="signin-panel" class="mt-3 text-sm text-blue-800 underline">Volver</button></section>
+    <p data-auth-message role="status" aria-live="polite" hidden class="mt-4 text-sm"></p>
+    <p class="mt-6 text-xs text-slate-500 leading-relaxed">Tus datos de salud son personales. Cierra sesión en dispositivos compartidos. Esta aplicación no sustituye la atención de profesionales sanitarios.</p>
+  </main>
+</body></html>
