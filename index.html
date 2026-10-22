@@ -1,4 +1,3 @@
-<!-- Código HTML Completo del Dashboard - Salud en Orden -->
 <!DOCTYPE html>
 
 <html lang="es">
@@ -19,10 +18,31 @@
         }
     </style>
     <script src="https://google.com" async defer></script>
+
+<style id="salud-sidebar-responsive-fix">
+  /* En escritorio se conserva la barra lateral original. En móvil se abre como menú desplegable. */
+  #salud-mobile-overlay { display: none; }
+  #salud-mobile-menu-button { display: none; }
+  @media (max-width: 1023px) {
+    #salud-mobile-menu-button { display: inline-flex; }
+    #salud-app-sidebar { display: none !important; z-index: 60; }
+    #salud-app-sidebar.salud-sidebar-open { display: flex !important; }
+    #salud-mobile-overlay.salud-overlay-open {
+      display: block; position: fixed; inset: 0; z-index: 55;
+      background: rgba(15, 23, 42, .48);
+    }
+    main.flex-1 { margin-left: 0 !important; }
+  }
+  @media (min-width: 1024px) {
+    #salud-app-sidebar { display: flex !important; }
+    #salud-mobile-menu-button, #salud-mobile-overlay { display: none !important; }
+  }
+</style>
+
 </head>
 <body class="flex min-h-screen">
 <!-- Menú Lateral -->
-<aside class="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-[#f7f9fb] border-r border-gray-200 py-6">
+<aside id="salud-app-sidebar" class="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-[#f7f9fb] border-r border-gray-200 py-6">
 <div class="px-6 mb-8">
 <h1 class="text-xl font-bold text-[#0d47a1]">Tu salud a la mano</h1>
 <p class="text-xs text-gray-500 uppercase tracking-wider">Clinical Portal</p>
@@ -68,10 +88,17 @@
 </div>
 </div>
 </aside>
+<div id="salud-mobile-overlay" aria-hidden="true"></div>
+
 <!-- Área de Contenido Principal -->
 <main class="flex-1 lg:ml-64">
 <!-- Barra Superior -->
 <nav class="sticky top-0 z-50 flex justify-between items-center px-8 h-16 w-full bg-white border-b border-gray-200">
+<button id="salud-mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false"
+  style="align-items:center;justify-content:center;width:42px;height:42px;border:1px solid #d1d5db;border-radius:10px;background:white;color:#0d47a1;font-size:24px;flex-shrink:0;margin-right:10px">
+  ☰
+</button>
+
 <div class="flex items-center gap-4 w-1/3">
 <div class="relative w-full max-w-md">
 <input class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 border-none text-sm focus:ring-2 focus:ring-blue-500" placeholder="Search records, appointments..." type="text"/>
@@ -211,5 +238,33 @@
 <script src="supabase-config.js"></script>
 <script src="auth.js" defer></script>
 <script src="app.js" defer></script>
+
+<script id="salud-sidebar-toggle">
+(() => {
+  const sidebar = document.getElementById('salud-app-sidebar');
+  const overlay = document.getElementById('salud-mobile-overlay');
+  const toggle = document.getElementById('salud-mobile-menu-button');
+  if (!sidebar || !overlay || !toggle) return;
+  const closeMenu = () => {
+    sidebar.classList.remove('salud-sidebar-open');
+    overlay.classList.remove('salud-overlay-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menú');
+  };
+  const openMenu = () => {
+    sidebar.classList.add('salud-sidebar-open');
+    overlay.classList.add('salud-overlay-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Cerrar menú');
+  };
+  toggle.addEventListener('click', () => {
+    sidebar.classList.contains('salud-sidebar-open') ? closeMenu() : openMenu();
+  });
+  overlay.addEventListener('click', closeMenu);
+  sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+})();
+</script>
+
 </body>
 </html>
