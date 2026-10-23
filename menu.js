@@ -11,6 +11,23 @@
 
   function initMenu() {
     if (document.getElementById('salud-shared-sidebar')) return;
+
+    // En las páginas secundarias elimina las barras laterales originales del HTML.
+    // index.html no carga este archivo, por lo que conserva su menú original.
+    const appFiles = new Set(['index.html', 'medicamento.html', 'calendario.html', 'autorizaciones.html', 'ajustes.html']);
+    if (appFiles.has(currentFile) && currentFile !== 'index.html') {
+      const targets = new Set(['index.html', 'medicamento.html', 'calendario.html', 'autorizaciones.html', 'ajustes.html']);
+      document.querySelectorAll('nav').forEach(nav => {
+        const hasAppLinks = Array.from(nav.querySelectorAll('a[href]')).some(a => targets.has((a.getAttribute('href') || '').split('/').pop().split(/[?#]/)[0].toLowerCase()));
+        const looksLikeSidebar = hasAppLinks || /SideNavBar|Side Nav|Menú Lateral|Menu Lateral/i.test(nav.parentElement?.textContent?.slice(0, 80) || '');
+        if (looksLikeSidebar) nav.remove();
+      });
+      // Elimina los botones/controles que abrían el menú lateral anterior.
+      document.querySelectorAll('[aria-label*="menu" i], [aria-label*="menú" i], [data-drawer-target], [data-drawer-toggle]').forEach(el => {
+        if (!el.closest('main') && !el.closest('form')) el.remove();
+      });
+    }
+
     const style = document.createElement('style');
     style.id = 'salud-shared-menu-styles';
     style.textContent = `
