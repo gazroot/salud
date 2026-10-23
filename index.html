@@ -37,6 +37,40 @@
     #salud-app-sidebar { display: flex !important; }
     #salud-mobile-menu-button, #salud-mobile-overlay { display: none !important; }
   }
+@media (min-width: 1024px) {
+  body > #salud-app-sidebar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 256px !important;
+    height: 100vh !important;
+    z-index: 1000 !important;
+    background-color: #f7f9fb !important;
+  }
+
+  body > main.flex-1 {
+    margin-left: 256px !important;
+    width: calc(100% - 256px) !important;
+  }
+
+  #salud-app-sidebar nav {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  #salud-app-sidebar nav a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    visibility: visible !important;
+  }
+}
 </style>
 
 </head>
