@@ -103,10 +103,15 @@
 <a class="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm" href="ajustes.html">
 <span class="material-icons text-sm">settings</span> Ajustes
                 </a>
-<a class="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm" href="login.html">
-<span class="material-icons text-sm">logout</span> cerrar sesión
-                </a>
-</div><!--conexion con google-->
+<button
+  type="button"
+  id="salud-logout-button"
+  class="w-full flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm"
+>
+  <span class="material-icons text-sm">logout</span>
+  Cerrar sesión
+</button>
+</div>
 
 <div class="flex items-center gap-3 px-4 py-2">
 <img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-gray-200" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
@@ -298,6 +303,37 @@
   sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 })();
+       
+const logoutButton = document.getElementById('salud-logout-button');
+
+if (logoutButton) {
+  logoutButton.addEventListener('click', async () => {
+    const client = window.saludSupabase;
+
+    if (!client) {
+      alert('No se pudo conectar con Supabase.');
+      return;
+    }
+
+    logoutButton.disabled = true;
+    logoutButton.textContent = 'Cerrando sesión...';
+
+    try {
+      const { error } = await client.auth.signOut();
+
+      if (error) {
+        throw error;
+      }
+
+      window.location.replace('login.html');
+    } catch (error) {
+      alert('No se pudo cerrar la sesión: ' + error.message);
+      logoutButton.disabled = false;
+      logoutButton.textContent = 'Cerrar sesión';
+    }
+  });
+}
+
 </script>
 
 </body>
