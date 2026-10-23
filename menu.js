@@ -9,7 +9,8 @@
     ['ajustes.html', 'Ajustes', 'settings']
   ];
   function initMenu() {
-    if (document.getElementById('salud-shared-sidebar')) return;
+    // index.html ya contiene su menú original y su cierre de sesión.
+    if (currentFile === 'index.html' || document.getElementById('salud-shared-sidebar')) return;
     const style = document.createElement('style');
     style.textContent = `
       #salud-shared-sidebar{position:fixed;inset:0 auto 0 0;width:264px;background:#fff;border-right:1px solid #e2e8f0;z-index:1000;display:flex;flex-direction:column;padding:22px 16px;box-sizing:border-box;transform:translateX(-105%);transition:transform .22s ease;overflow-y:auto;color:#172554;font-family:Inter,system-ui,sans-serif}
