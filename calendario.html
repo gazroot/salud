@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 
 <html class="light" lang="es"><head>
-<style id="salud-unified-menu-cleanup">
-/* Oculta los menús originales de las plantillas; menu.js añade un único menú compartido. */
-body > nav:not(#salud-shared-sidebar),
-body > aside:not(#salud-shared-sidebar),
-body > div > nav,
-body > div > aside,
-body > div > div > nav,
-body > div > div > aside { display:none !important; }
-</style>
-
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Citas y Órdenes Médicas - Salud en Orden</title>
@@ -179,6 +169,7 @@ body > div > div > aside { display:none !important; }
           },
         }
       </script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 </head>
 <body class="bg-background text-on-surface font-body-md text-body-md antialiased flex flex-col md:flex-row min-h-screen">
 <!-- SideNavBar (Desktop) -->
@@ -223,7 +214,7 @@ body > div > div > aside { display:none !important; }
 </div>
 </nav>
 <!-- Main Content Area -->
-<div class="flex-1 flex flex-col min-w-0 ">
+<div class="flex-1 flex flex-col min-w-0 lg:ml-64">
 <!-- TopNavBar (Mobile/Tablet & Desktop) -->
 <header class="sticky top-0 z-50 flex justify-between items-center px-container-padding h-16 w-full bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline lg:hidden">
 <div class="flex items-center gap-4">
