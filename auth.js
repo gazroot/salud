@@ -35,11 +35,9 @@
     const {data,error}=await client().auth.getSession();
     if(error || !data.session){const next=encodeURIComponent(location.href);location.replace(loginUrl()+'?next='+next);return;}
     window.saludSession=data.session;
-  // La sesión se muestra dentro del menú lateral de index.html.
-// En las demás páginas se conserva la barra de sesión.
-if (file !== 'index.html') {
-  addSessionBar(data.session.user);
-}
+  // La sesión se muestra dentro del menú lateral compartido; evita una segunda barra superior.
+  if (file === 'index.html') { /* index.html ya muestra la cuenta en su menú */ }
+  window.saludSession = data.session;
     document.dispatchEvent(new CustomEvent('salud:ready',{detail:{user:data.session.user}}));
   }
   async function initLogin() {
