@@ -2,7 +2,8 @@
 (() => {
   const $ = (s, root=document) => root.querySelector(s);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const today = () => new Date().toISOString().slice(0,10);
+  const today = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}; };
+  let calendarCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let user = null, db = { profile:null, measures:[], appointments:[], medications:[], orders:[] };
   const client = () => window.saludSupabase;
   const table = { measures:'medidas_salud', appointments:'citas', medications:'medicamentos', orders:'ordenes_salud' };
@@ -25,7 +26,7 @@
   }
   function bindDeletes(root) { root.querySelectorAll('[data-delete-kind]').forEach(b=>b.addEventListener('click',()=>remove(b.dataset.deleteKind, b.dataset.deleteId))); }
   function addMeasure() { formModal('Registrar medida de salud',input('Fecha','fecha','date',true,`value="${today()}"`)+input('Peso (kg)','peso','number',false,'step="0.1" min="0"')+input('Presión sistólica (mmHg)','presion_sistolica','number',false,'min="0"')+input('Presión diastólica (mmHg)','presion_diastolica','number',false,'min="0"')+input('Pulso (latidos/min)','pulso','number',false,'min="0"')+input('Temperatura (°C)','temperatura','number',false,'step="0.1"')+textarea('Notas','notas'),'Guardar medida',d=>insert('measures',clean(d,['peso','presion_sistolica','presion_diastolica','pulso','temperatura']))); }
-  function addAppointment() { formModal('Nueva cita médica',input('Fecha','fecha','date',true,`value="${today()}"`)+input('Hora','hora','time',true)+input('Profesional o centro médico','profesional','text',true)+input('Motivo o especialidad','motivo','text',true)+input('Lugar','lugar')+`<label style="display:grid;gap:5px;font-size:14px;font-weight:600">Estado<select name="estado" style="padding:10px;border:1px solid #cbd5e1;border-radius:9px"><option>Programada</option><option>Realizada</option><option>Cancelada</option></select></label>`+textarea('Notas','notas'),'Guardar cita',d=>insert('appointments',d)); }
+  function addAppointment(prefillDate=today()) { formModal('Nueva cita médica',input('Fecha','fecha','date',true,`value="${prefillDate}"`)+input('Hora','hora','time',true)+input('Profesional o centro médico','profesional','text',true)+input('Motivo o especialidad','motivo','text',true)+input('Lugar','lugar')+`<label style="display:grid;gap:5px;font-size:14px;font-weight:600">Estado<select name="estado" style="padding:10px;border:1px solid #cbd5e1;border-radius:9px"><option>Programada</option><option>Realizada</option><option>Cancelada</option></select></label>`+textarea('Notas','notas'),'Guardar cita',d=>insert('appointments',d)); }
   function addMedication() { formModal('Añadir medicamento',input('Nombre','nombre','text',true)+input('Dosis prescrita','dosis','text',false)+input('Frecuencia indicada','frecuencia','text',false)+input('Hora habitual','hora','time')+input('Fecha de inicio','fecha_inicio','date')+input('Fecha de fin','fecha_fin','date')+textarea('Notas','notas'),'Guardar medicamento',d=>insert('medications',d)); }
   function addOrder() { formModal('Añadir orden o documento',input('Nombre','nombre','text',true)+input('Tipo','tipo','text')+input('Fecha','fecha','date',false,`value="${today()}"`)+input('Estado','estado','text',false,'value="Pendiente"')+textarea('Notas','notas'),'Guardar orden',d=>insert('orders',d)); }
   function clean(data, numericKeys=[]) { for(const k of Object.keys(data)){if(data[k]==='')data[k]=null;else if(numericKeys.includes(k))data[k]=Number(data[k]);}return data; }
@@ -51,7 +52,29 @@
       panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Registrar medida',addMeasure),button('＋ Nueva cita',addAppointment));bindDeletes(panel);return;
     }
     if(path.includes('calendario')) {
-      html=card('Mis citas médicas',`<div id="salud-actions"></div>${recordList(db.appointments,'appointments',r=>r.motivo, r=>`${r.fecha} ${r.hora||''} · ${r.profesional} · ${r.lugar||'Lugar no indicado'} · ${r.estado||'Programada'}${r.notas?' · '+r.notas:''}`)}`);panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Agendar cita',addAppointment));bindDeletes(panel);return;
+      const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth();
+      const monthName=new Intl.DateTimeFormat('es-CO',{month:'long',year:'numeric'}).format(calendarCursor);
+      const firstDay=(new Date(year,month,1).getDay()+6)%7, daysInMonth=new Date(year,month+1,0).getDate();
+      const byDate={}; db.appointments.forEach(a=>{if(a.fecha)(byDate[a.fecha] ||= []).push(a);});
+      const weekdays=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+      let cells=weekdays.map(d=>`<div style="padding:8px;text-align:center;font-size:12px;font-weight:700;color:#64748b">${d}</div>`).join('');
+      for(let i=0;i<firstDay;i++) cells+=`<div aria-hidden="true" style="min-height:90px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc"></div>`;
+      for(let day=1;day<=daysInMonth;day++){
+        const dateKey=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const events=byDate[dateKey]||[], isToday=dateKey===today();
+        cells+=`<div style="min-height:90px;border:1px solid ${isToday?'#0d47a1':'#e2e8f0'};border-radius:10px;padding:6px;background:${isToday?'#eff6ff':'white'};min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:3px"><strong style="font-size:13px">${day}</strong><button type="button" data-add-date="${dateKey}" aria-label="Agendar el ${dateKey}" style="font-size:11px;color:#0d47a1;border:1px solid #bfdbfe;border-radius:6px;padding:2px 5px">+</button></div>
+        ${events.map(a=>`<div title="${esc(a.profesional||'')}" style="overflow-wrap:anywhere;margin-top:5px;padding:4px;border-radius:5px;background:${a.estado==='Cancelada'?'#f1f5f9':'#dbeafe'};color:#1e3a8a;font-size:11px">${esc((a.hora?a.hora+' · ':'')+(a.motivo||'Cita médica'))}</div>`).join('')}</div>`;
+      }
+      const upcoming=db.appointments.filter(a=>a.estado!=='Cancelada'&&a.fecha>=today()).sort((a,b)=>(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
+      html=card('Calendario de citas',`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px"><button id="calendar-prev" type="button" aria-label="Mes anterior" style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px">‹</button><h3 style="font-size:20px;font-weight:700;text-transform:capitalize;margin:0">${esc(monthName)}</h3><button id="calendar-next" type="button" aria-label="Mes siguiente" style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px">›</button><button id="calendar-today" type="button" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px">Hoy</button></div><button id="calendar-add" type="button" style="padding:10px 13px;border-radius:9px;background:#0d47a1;color:white;font-weight:600">＋ Agendar cita</button></div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;overflow-x:auto">${cells}</div><h3 style="font-size:18px;font-weight:700;margin:24px 0 12px">Próximas citas</h3>${recordList(upcoming,'appointments',r=>r.motivo||'Cita médica',r=>`${r.fecha} ${r.hora||''} · ${r.profesional||'Profesional no indicado'} · ${r.lugar||'Lugar no indicado'} · ${r.estado||'Programada'}${r.notas?' · '+r.notas:''}`)}`);
+      panel.innerHTML=html;main.append(panel);bindDeletes(panel);
+      $('#calendar-prev',panel).onclick=()=>{calendarCursor=new Date(year,month-1,1);renderPage();};
+      $('#calendar-next',panel).onclick=()=>{calendarCursor=new Date(year,month+1,1);renderPage();};
+      $('#calendar-today',panel).onclick=()=>{calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderPage();};
+      $('#calendar-add',panel).onclick=()=>addAppointment(today());
+      panel.querySelectorAll('[data-add-date]').forEach(b=>b.onclick=()=>addAppointment(b.dataset.addDate));
+      return;
     }
     if(path.includes('medicamento')) {
       html=card('Mis medicamentos guardados',`<p style="color:#64748b;margin-bottom:10px">Registra únicamente las indicaciones que te haya dado tu profesional de salud.</p><div id="salud-actions"></div>${recordList(db.medications,'medications',r=>r.nombre,r=>`${r.dosis||'Dosis no indicada'} · ${r.frecuencia||'Frecuencia no indicada'} · ${r.hora||''} · ${r.fecha_inicio||''}${r.fecha_fin?' a '+r.fecha_fin:''}${r.notas?' · '+r.notas:''}`)}`);panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Añadir medicamento',addMedication));bindDeletes(panel);return;
