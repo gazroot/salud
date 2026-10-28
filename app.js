@@ -126,7 +126,21 @@ async function loadRows(kind, orderField) {
       const old=$('#salud-db-status',panel);if(old)old.textContent='';return;
     }
   }
-  document.addEventListener('salud:ready', async e=>{user=e.detail.user;await refresh();});
+document.addEventListener('salud:ready', async (e) => {
+  try {
+    user = e.detail.user;
+
+    console.log('Salud en Orden: sesión detectada', user?.id);
+
+    await refresh();
+
+    console.log('Salud en Orden: carga finalizada');
+  } catch (error) {
+    console.error('Error al iniciar el panel:', error);
+    toast('No se pudo iniciar el panel: ' + error.message, true);
+  }
+});
+
   document.addEventListener('DOMContentLoaded',()=>{
     document.querySelectorAll('a[href="#"]').forEach(a=>{if(/logout|cerrar sesión/i.test(a.textContent))a.addEventListener('click',async ev=>{ev.preventDefault();const {error}=await client().auth.signOut();if(error)toast(error.message,true);else location.href='login.html';});});
     document.querySelectorAll('button').forEach(b=>{if(/emergency contact|contacto de emergencia/i.test(b.textContent))b.addEventListener('click',()=>{const phone=db.profile?.telefono_emergencia;if(phone&&confirm('¿Llamar a tu contacto de emergencia?'))location.href='tel:'+phone.replace(/[^+\d]/g,'');else if(!phone)alert('Primero registra un teléfono de emergencia en Ajustes. Si existe una emergencia inmediata en Colombia, llama al 123.');});});
