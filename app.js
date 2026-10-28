@@ -2,7 +2,10 @@
 (() => {
   const $ = (s, root=document) => root.querySelector(s);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const today = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}; };
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
   let calendarCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let user = null, db = { profile:null, measures:[], appointments:[], medications:[], orders:[] };
   const client = () => window.saludSupabase;
