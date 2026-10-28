@@ -86,6 +86,45 @@ async function loadRows(kind, orderField) {
       html+=card('Mis datos guardados en la nube',`<p style="color:#64748b;margin-bottom:10px">Cuenta: ${esc(user.email)}. Estos registros se sincronizan al iniciar sesión en otro dispositivo.</p><div id="salud-actions"></div>`);
       html+=card('Última medida',last?`<p><strong>Fecha:</strong> ${esc(last.fecha)} · <strong>Peso:</strong> ${esc(last.peso??'—')} kg · <strong>Presión:</strong> ${esc(last.presion_sistolica??'—')}/${esc(last.presion_diastolica??'—')} · <strong>Pulso:</strong> ${esc(last.pulso??'—')} · <strong>Temperatura:</strong> ${esc(last.temperatura??'—')} °C</p><p style="color:#64748b;margin-top:6px">${esc(last.notas||'Sin notas')}</p>`:'Aún no has guardado medidas.');
       html+=card('Próximas citas',recordList(upcoming,'appointments',r=>r.motivo, r=>`${r.fecha} ${r.hora||''} · ${r.profesional} · ${r.estado}`));
+      
+      // Medicamentos registrados en Supabase
+      const activeMeds = db.medications.filter(m => m.activo);
+
+      html += card(
+        'Mis medicamentos',
+        recordList(
+          activeMeds,
+          'medications',
+          m => m.nombre,
+          m => `${m.dosis || 'Sin dosis indicada'} · ${m.frecuencia || 'Sin frecuencia indicada'}`
+        )
+      );
+
+      // Órdenes y autorizaciones registradas
+      html += card(
+        'Órdenes y autorizaciones',
+        recordList(
+          db.orders,
+          'orders',
+          o => o.nombre,
+          o => `${o.fecha || 'Sin fecha'} · ${o.estado}`
+        )
+      );
+
+      // Perfil real del usuario
+      const profile = db.profile || {};
+
+      html += card(
+        'Mi perfil',
+        `<p><strong>Nombre:</strong> ${esc(profile.nombre || 'Sin registrar')}</p>
+         <p><strong>EPS:</strong> ${esc(profile.eps || 'Sin registrar')}</p>
+         <p><strong>Contacto de emergencia:</strong> ${esc(profile.contacto_emergencia || 'Sin registrar')}</p>
+         <p><strong>Teléfono de emergencia:</strong> ${esc(profile.telefono_emergencia || 'Sin registrar')}</p>
+         <p style="margin-top:10px">
+           <a href="ajustes.html" style="color:#0d47a1;font-weight:600">Editar mi perfil</a>
+         </p>`
+      );
+
       panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Registrar medida',addMeasure),button('＋ Nueva cita',addAppointment));bindDeletes(panel);return;
     }
     if(path.includes('calendario')) {
