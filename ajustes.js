@@ -50,8 +50,39 @@
     if(cards) [...cards.children].slice(0,3).forEach((card,i)=>{
       const selected=['azul','verde','contraste'][i]===palette;
       card.style.cursor='pointer';card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed',String(selected));
-      card.style.border=selected?'2px solid var(--primary)':'1px solid #d1d5db';
-      card.onclick=()=>{applyPalette(['azul','verde','contraste'][i]);persistVisuals();markDirty();};
+     
+card.style.border = selected
+  ? '2px solid var(--primary)'
+  : '1px solid #d1d5db';
+
+card.style.position = 'relative';
+card.style.boxSizing = 'border-box';
+card.style.minWidth = '0';
+card.style.overflowWrap = 'anywhere';
+card.style.whiteSpace = 'normal';
+
+let indicator = card.querySelector('[data-palette-check]');
+if (!indicator) {
+  indicator = document.createElement('span');
+  indicator.dataset.paletteCheck = 'true';
+  indicator.setAttribute('aria-hidden', 'true');
+  indicator.textContent = '✓';
+  indicator.style.cssText =
+    'position:absolute;top:8px;right:8px;width:24px;height:24px;' +
+    'display:grid;place-items:center;border-radius:50%;font-weight:700;' +
+    'background:var(--primary);color:white;';
+  card.append(indicator);
+}
+
+indicator.hidden = !selected;
+card.setAttribute('aria-pressed', String(selected));
+
+card.onclick = () => {
+  applyPalette(['azul', 'verde', 'contraste'][i]);
+  persistVisuals();
+  markDirty();
+};
+
       card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}};
     });
   }
