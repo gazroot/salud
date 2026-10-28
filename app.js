@@ -52,7 +52,22 @@ const today = () => {
   function addMedication() { formModal('Añadir medicamento',input('Nombre','nombre','text',true)+input('Dosis prescrita','dosis','text',false)+input('Frecuencia indicada','frecuencia','text',false)+input('Hora habitual','hora','time')+input('Fecha de inicio','fecha_inicio','date')+input('Fecha de fin','fecha_fin','date')+textarea('Notas','notas'),'Guardar medicamento',d=>insert('medications',d)); }
   function addOrder() { formModal('Añadir orden o documento',input('Nombre','nombre','text',true)+input('Tipo','tipo','text')+input('Fecha','fecha','date',false,`value="${today()}"`)+input('Estado','estado','text',false,'value="Pendiente"')+textarea('Notas','notas'),'Guardar orden',d=>insert('orders',d)); }
   function clean(data, numericKeys=[]) { for(const k of Object.keys(data)){if(data[k]==='')data[k]=null;else if(numericKeys.includes(k))data[k]=Number(data[k]);}return data; }
-  async function loadRows(kind, orderField) { const {data,error}=await client().from(table[kind]).select('*').order(orderField,{ascending:false});if(error)throw error;return data||[]; }
+  
+async function loadRows(kind, orderField) {
+  if (!client() || !user) {
+    throw new Error('No hay una sesión activa.');
+  }
+
+  const { data, error } = await client()
+    .from(table[kind])
+    .select('*')
+    .eq('usuario_id', user.id)
+    .order(orderField, { ascending: false });
+
+  if (error) throw error;
+
+  return data || [];
+}
   async function refresh() {
     if(!client()||!user)return;
     try {
