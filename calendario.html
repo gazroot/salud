@@ -169,9 +169,64 @@
           },
         }
       </script>
+<script src="tema-global.js"></script>
+        
+<style>
+  /* Mejorar la visibilidad del calendario en modo oscuro */
+  html.dark body {
+    background: #111827 !important;
+    color: #f1f5f9 !important;
+  }
+
+  html.dark main {
+    background: #111827 !important;
+    color: #f1f5f9 !important;
+  }
+
+  html.dark header h1 {
+    color: #93c5fd !important;
+  }
+
+  html.dark header p {
+    color: #cbd5e1 !important;
+  }
+
+  /* Botones y flechas del calendario */
+  html.dark main button {
+    color: #f1f5f9 !important;
+  }
+
+  html.dark main button:hover {
+    background-color: #334155 !important;
+  }
+
+  /* Textos, días y controles */
+  html.dark main [style*="color:#64748b"],
+  html.dark main [style*="color: #64748b"],
+  html.dark main [style*="color:#172033"],
+  html.dark main [style*="color: #172033"] {
+    color: #cbd5e1 !important;
+  }
+
+  /* Tarjetas y elementos programados */
+  html.dark main [style*="background:#fff"],
+  html.dark main [style*="background: #fff"],
+  html.dark main [style*="background-color: white"] {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+  }
+</style>
+
 </head>
 <body class="min-h-screen" style="margin:0;background:#f7f9fb;color:#172033;font-family:Inter,system-ui,sans-serif">
 <main class="min-h-screen" style="min-width:0"><div style="max-width:1200px;margin:0 auto;padding:24px 18px">
-<header style="margin-bottom:20px"><h1 style="font-size:30px;font-weight:750;color:#0d47a1;margin:0 0 8px">Calendario de salud</h1><p style="margin:0;color:#64748b">Consulta y organiza tus citas médicas registradas en tu cuenta.</p></header>
+<header style="margin-bottom:20px"><h1 style="font-size:30px;font-weight:750;color:#0d47a1;margin:0 0 8px">Calendario de salud</h1>
+        <p style="margin:0;color:#64748b">Consulta y organiza tus citas médicas registradas en tu cuenta.</p></header>
 <p id="salud-db-status" role="status" style="display:none;color:#64748b">Cargando tus citas desde tu cuenta…</p>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script defer src="auth.js"></script><script defer src="app.js"></script><script defer src="menu.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="supabase-config.js"></script>
+        <script defer src="auth.js">
+                
+        </script><script defer src="app.js">
+        
+</script><script defer src="menu.js"></script></body></html>

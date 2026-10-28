@@ -45,14 +45,14 @@ const today = () => {
     } catch(e) { const box=$('#salud-db-status'); if(box)box.textContent='No se pudieron cargar los datos desde Supabase: '+e.message; else toast('Error consultando Supabase: '+e.message,true); }
   }
   function renderPage() {
-    $('#salud-db-panel')?.remove();const path=page();const main=(path==='index.html'||path==='')?($('#salud-dashboard-root')||$('main')||document.body):($('main')||document.body);$('#salud-dashboard-loading')?.remove();const panel=document.createElement('section');panel.id='salud-db-panel';panel.style.cssText='max-width:1100px;margin:20px auto;padding:0 18px 30px;box-sizing:border-box;width:100%;color:#172033';
+    $('#salud-db-panel')?.remove();const path=page();const main=$('main')||document.body;const panel=document.createElement('section');panel.id='salud-db-panel';panel.style.cssText='max-width:1100px;margin:20px auto;padding:0 18px 30px;box-sizing:border-box;width:100%;color:#172033';
     let html='';
     if(path==='index.html'||path==='' ) {
       const last=db.measures[0], upcoming=db.appointments.filter(a=>a.estado!=='Cancelada'&&a.fecha>=today()).sort((x,y)=>(x.fecha+(x.hora||'')).localeCompare(y.fecha+(y.hora||'')));
       html+=card('Mis datos guardados en la nube',`<p style="color:#64748b;margin-bottom:10px">Cuenta: ${esc(user.email)}. Estos registros se sincronizan al iniciar sesión en otro dispositivo.</p><div id="salud-actions"></div>`);
       html+=card('Última medida',last?`<p><strong>Fecha:</strong> ${esc(last.fecha)} · <strong>Peso:</strong> ${esc(last.peso??'—')} kg · <strong>Presión:</strong> ${esc(last.presion_sistolica??'—')}/${esc(last.presion_diastolica??'—')} · <strong>Pulso:</strong> ${esc(last.pulso??'—')} · <strong>Temperatura:</strong> ${esc(last.temperatura??'—')} °C</p><p style="color:#64748b;margin-top:6px">${esc(last.notas||'Sin notas')}</p>`:'Aún no has guardado medidas.');
       html+=card('Próximas citas',recordList(upcoming,'appointments',r=>r.motivo, r=>`${r.fecha} ${r.hora||''} · ${r.profesional} · ${r.estado}`));
-      panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Registrar medida',addMeasure),button('＋ Nueva cita',addAppointment));const topAppointment=$('#salud-dashboard-new-appointment');if(topAppointment)topAppointment.onclick=()=>addAppointment();const sidebarName=$('#salud-sidebar-user');if(sidebarName)sidebarName.textContent=db.profile?.nombre||user.email||'Cuenta personal';const sidebarEps=$('#salud-sidebar-eps');if(sidebarEps)sidebarEps.textContent=db.profile?.eps||'Perfil de salud';bindDeletes(panel);return;
+      panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Registrar medida',addMeasure),button('＋ Nueva cita',addAppointment));bindDeletes(panel);return;
     }
     if(path.includes('calendario')) {
       const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth();
