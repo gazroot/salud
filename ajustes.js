@@ -32,35 +32,12 @@
     document.body.style.backgroundColor=dark?'#111827':'#f7f9fb';
     document.body.style.color=dark?'#f3f4f6':'';
     themeCards().forEach((card,i)=>{
-       card.style.boxSizing = 'border-box';
-card.style.minWidth = '0';
-card.style.maxWidth = '100%';
-card.style.overflowWrap = 'anywhere';
-card.style.whiteSpace = 'normal';
       const selected=['claro','oscuro','automatico'][i]===theme;
       card.style.cursor='pointer'; card.setAttribute('role','button'); card.tabIndex=0; card.setAttribute('aria-pressed',String(selected));
       card.style.border=selected?'2px solid #0d47a1':'1px solid #d1d5db';
       card.style.background=selected?'rgba(13,71,161,.07)':'';
-  
-let status = card.querySelector('[data-theme-status]');
-
-if (!status) {
-  status = document.createElement('span');
-  status.dataset.themeStatus = 'true';
-  status.style.display = 'block';
-  status.style.fontSize = '12px';
-  status.style.lineHeight = '18px';
-  status.style.whiteSpace = 'normal';
-  status.style.overflowWrap = 'anywhere';
-  status.style.marginTop = '12px';
-  card.appendChild(status);
-}
-
-status.textContent = selected
-  ? '✓ Seleccionado'
-  : 'Hacer clic para activar';
-
-      card.onclick=()=>{applyTheme(['claro','oscuro','automatico'][i]);persistVisuals();markDirty();};
+      const status=card.querySelector('span:last-child'); if(status) status.textContent=selected?'✓ Seleccionado':'Hacer clic para activar';
+      card.onclick=()=>{applyTheme(['claro','oscuro','automatico'][i]);markDirty();};
       card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}};
     });
   }
@@ -73,39 +50,8 @@ status.textContent = selected
     if(cards) [...cards.children].slice(0,3).forEach((card,i)=>{
       const selected=['azul','verde','contraste'][i]===palette;
       card.style.cursor='pointer';card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-pressed',String(selected));
-     
-card.style.border = selected
-  ? '2px solid var(--primary)'
-  : '1px solid #d1d5db';
-
-card.style.position = 'relative';
-card.style.boxSizing = 'border-box';
-card.style.minWidth = '0';
-card.style.overflowWrap = 'anywhere';
-card.style.whiteSpace = 'normal';
-
-let indicator = card.querySelector('[data-palette-check]');
-if (!indicator) {
-  indicator = document.createElement('span');
-  indicator.dataset.paletteCheck = 'true';
-  indicator.setAttribute('aria-hidden', 'true');
-  indicator.textContent = '✓';
-  indicator.style.cssText =
-    'position:absolute;top:8px;right:8px;width:24px;height:24px;' +
-    'display:grid;place-items:center;border-radius:50%;font-weight:700;' +
-    'background:var(--primary);color:white;';
-  card.append(indicator);
-}
-
-indicator.hidden = !selected;
-card.setAttribute('aria-pressed', String(selected));
-
-card.onclick = () => {
-  applyPalette(['azul', 'verde', 'contraste'][i]);
-  persistVisuals();
-  markDirty();
-};
-
+      card.style.border=selected?'2px solid var(--primary)':'1px solid #d1d5db';
+      card.onclick=()=>{applyPalette(['azul','verde','contraste'][i]);markDirty();};
       card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}};
     });
   }
@@ -113,14 +59,6 @@ card.onclick = () => {
     const sec=sectionFor('4. Notificaciones'); return sec ? $$('input[type="checkbox"]',sec) : [];
   }
   function markDirty(){ const bar=$('#save-settings-bar'); if(bar){bar.style.opacity='1';bar.querySelector('p').textContent='Hay cambios pendientes de configuración';} }
-  function persistVisuals(){
-    try {
-      const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
-      const next={...saved,...state,theme:state.theme,palette:state.palette};
-      localStorage.setItem(KEY,JSON.stringify(next));
-      window.dispatchEvent(new CustomEvent('salud:theme-change',{detail:next}));
-    } catch(e) {}
-  }
   function gather(){
     const inputs=$$('input[type="text"],input[type="email"],input[type="tel"]');
     const profile={}; inputs.forEach((el,i)=>{if(el.value!==undefined) profile[el.getAttribute('aria-label')||el.closest('label')?.innerText?.trim()||`campo${i}`]=el.value;});
@@ -141,7 +79,7 @@ card.onclick = () => {
     notice('Preferencias restablecidas. Pulsa Guardar para confirmar.');markDirty();
   }
   function loadSaved(){
-    if(state.theme)applyTheme(state.theme);if(state.palette)applyPalette(state.palette);window.dispatchEvent(new CustomEvent('salud:theme-change',{detail:state}));
+    if(state.theme)applyTheme(state.theme);if(state.palette)applyPalette(state.palette);
     const checks=getNotificationInputs();checks.forEach((el,i)=>{if(state.notifications[i]!==undefined)el.checked=state.notifications[i];});
     if(Array.isArray(state.profileValues)) $$('input[type="text"],input[type="email"],input[type="tel"]').forEach((el,i)=>{if(state.profileValues[i]!==undefined)el.value=state.profileValues[i];});
   }
