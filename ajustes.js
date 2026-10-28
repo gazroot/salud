@@ -41,7 +41,25 @@ card.style.whiteSpace = 'normal';
       card.style.cursor='pointer'; card.setAttribute('role','button'); card.tabIndex=0; card.setAttribute('aria-pressed',String(selected));
       card.style.border=selected?'2px solid #0d47a1':'1px solid #d1d5db';
       card.style.background=selected?'rgba(13,71,161,.07)':'';
-      const status=card.querySelector('span:last-child'); if(status) status.textContent=selected?'✓ Seleccionado':'Hacer clic para activar';
+  
+let status = card.querySelector('[data-theme-status]');
+
+if (!status) {
+  status = document.createElement('span');
+  status.dataset.themeStatus = 'true';
+  status.style.display = 'block';
+  status.style.fontSize = '12px';
+  status.style.lineHeight = '18px';
+  status.style.whiteSpace = 'normal';
+  status.style.overflowWrap = 'anywhere';
+  status.style.marginTop = '12px';
+  card.appendChild(status);
+}
+
+status.textContent = selected
+  ? '✓ Seleccionado'
+  : 'Hacer clic para activar';
+
       card.onclick=()=>{applyTheme(['claro','oscuro','automatico'][i]);persistVisuals();markDirty();};
       card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}};
     });
