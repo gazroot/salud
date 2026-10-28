@@ -19,8 +19,27 @@ const today = () => {
     $('#salud-modal')?.remove(); const w=document.createElement('div');w.id='salud-modal';w.style.cssText='position:fixed;inset:0;background:#0f172a99;z-index:10000;display:grid;place-items:center;padding:16px';
     w.innerHTML=`<section role="dialog" aria-modal="true" style="background:white;color:#172033;width:min(560px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="font-size:22px;font-weight:700">${esc(title)}</h2><button type="button" data-close aria-label="Cerrar" style="font-size:26px">×</button></div><form id="salud-data-form" style="display:grid;gap:12px;margin-top:16px">${fields}<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px"><button type="button" data-close style="padding:10px 14px;border:1px solid #cbd5e1;border-radius:9px">Cancelar</button><button type="submit" style="padding:10px 14px;background:#0d47a1;color:white;border-radius:9px;font-weight:600">${esc(submitLabel)}</button></div></form></section>`;
     document.body.append(w);w.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>w.remove());w.onclick=e=>{if(e.target===w)w.remove();};w.querySelector('form').onsubmit=async e=>{e.preventDefault();const btn=e.submitter;btn.disabled=true;const data=Object.fromEntries(new FormData(e.currentTarget));try{await onSubmit(data);w.remove();await refresh();toast('Registro guardado en tu cuenta.');}catch(err){toast('No se pudo guardar: '+(err.message||'comprueba la conexión y las políticas RLS.'),true);btn.disabled=false;}};
+  }async function insert(kind, payload) {
+  if (!client() || !user) {
+    throw new Error('Debes iniciar sesión antes de guardar.');
   }
-  async function insert(kind, payload) { const {error}=await client().from(table[kind]).insert(payload); if(error)throw error; }
+
+  const registro = {
+    ...clean(payload),
+    usuario_id: user.id
+  };
+
+  // La columna activo es obligatoria en medicamentos.
+  if (kind === 'medications') {
+    registro.activo = true;
+  }
+
+  const { error } = await client()
+    .from(table[kind])
+    .insert(registro);
+
+  if (error) throw error;
+}
   async function remove(kind,id) { if(!confirm('¿Eliminar este registro? Esta acción no se puede deshacer.'))return;const {error}=await client().from(table[kind]).delete().eq('id',id).eq('usuario_id',user.id);if(error){toast('No se pudo eliminar: '+error.message,true);return;}await refresh();toast('Registro eliminado.'); }
   function button(text, fn) { const b=document.createElement('button');b.type='button';b.textContent=text;b.style.cssText='padding:10px 13px;border-radius:9px;background:#0d47a1;color:white;font-weight:600;margin:3px 5px 8px 0';b.addEventListener('click',fn);return b; }
   function recordList(rows, kind, titleFn, detailFn) {
