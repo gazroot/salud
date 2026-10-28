@@ -32,6 +32,11 @@
     document.body.style.backgroundColor=dark?'#111827':'#f7f9fb';
     document.body.style.color=dark?'#f3f4f6':'';
     themeCards().forEach((card,i)=>{
+       card.style.boxSizing = 'border-box';
+card.style.minWidth = '0';
+card.style.maxWidth = '100%';
+card.style.overflowWrap = 'anywhere';
+card.style.whiteSpace = 'normal';
       const selected=['claro','oscuro','automatico'][i]===theme;
       card.style.cursor='pointer'; card.setAttribute('role','button'); card.tabIndex=0; card.setAttribute('aria-pressed',String(selected));
       card.style.border=selected?'2px solid #0d47a1':'1px solid #d1d5db';
