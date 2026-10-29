@@ -118,6 +118,18 @@ if (path === 'index.html' || path === '') {
 
   const activeMeds = db.medications.filter(m => m.activo);
   const profile = db.profile || {};
+  
+const sidebarNombre = document.getElementById('salud-sidebar-nombre');
+const sidebarEps = document.getElementById('salud-sidebar-eps');
+
+if (sidebarNombre) {
+  sidebarNombre.textContent = profile.nombre || user?.email || 'Usuario';
+}
+
+if (sidebarEps) {
+  sidebarEps.textContent = profile.eps || 'EPS sin registrar';
+}
+
 
   // Columna izquierda: cuenta, citas y medicamentos
   let leftHtml = '';
