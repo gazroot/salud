@@ -113,38 +113,74 @@ card.onclick = () => {
     const sec=sectionFor('4. Notificaciones'); return sec ? $$('input[type="checkbox"]',sec) : [];
   }
   function markDirty(){ const bar=$('#save-settings-bar'); if(bar){bar.style.opacity='1';bar.querySelector('p').textContent='Hay cambios pendientes de configuración';} }
-  function persistVisuals(){
-    try {
-      const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
-      const next={...saved,...state,theme:state.theme,palette:state.palette};
-      localStorage.setItem(KEY,JSON.stringify(next));
-      window.dispatchEvent(new CustomEvent('salud:theme-change',{detail:next}));
-    } catch(e) {}
+  function persistVisuals() {
+  try {
+    const visualSettings = {
+      theme: state.theme,
+      palette: state.palette,
+      notifications: state.notifications
+    };
+
+    localStorage.setItem(KEY, JSON.stringify(visualSettings));
+
+    window.dispatchEvent(
+      new CustomEvent('salud:theme-change', {
+        detail: visualSettings
+      })
+    );
+  } catch (e) {
+    notice('No se pudieron guardar las preferencias visuales.', true);
   }
-  function gather(){
-    const inputs=$$('input[type="text"],input[type="email"],input[type="tel"]');
-    const profile={}; inputs.forEach((el,i)=>{if(el.value!==undefined) profile[el.getAttribute('aria-label')||el.closest('label')?.innerText?.trim()||`campo${i}`]=el.value;});
-    state.profileValues=inputs.map(el=>el.value);
-    state.notifications=getNotificationInputs().map(el=>el.checked);
-    const eps=sectionFor('3. EPS y Cobertura'); if(eps) state.eps=eps.querySelector('input,select')?.value||state.eps;
-    state.updatedAt=new Date().toISOString();
+}
+ function gather() {
+  state.notifications = getNotificationInputs().map(el => el.checked);
+  state.updatedAt = new Date().toISOString();
+}
+async function save() {
+  gather();
+  persistVisuals();
+
+  const saved = await saveProfileToSupabase();
+
+  const bar = $('#save-settings-bar');
+
+  if (saved && bar) {
+    bar.style.opacity = '.75';
+    const message = bar.querySelector('p');
+
+    if (message) {
+      message.textContent = 'Cambios guardados correctamente.';
+    }
   }
-  function save(){
-    gather();
-    try { localStorage.setItem(KEY,JSON.stringify(state)); const bar=$('#save-settings-bar');if(bar)bar.style.opacity='.75';notice('Preferencias guardadas en este navegador. Para sincronizarlas entre dispositivos se necesita una tabla de preferencias en Supabase.'); }
-    catch(e){notice('No fue posible guardar las preferencias en este navegador.',true);}
-  }
+}
   function restore(){
     try {localStorage.removeItem(KEY);}catch(e){}
     state={...defaults,profile:{}};
     applyTheme('claro');applyPalette('azul');getNotificationInputs().forEach((el,i)=>el.checked=defaults.notifications[i]??false);
     notice('Preferencias restablecidas. Pulsa Guardar para confirmar.');markDirty();
   }
-  function loadSaved(){
-    if(state.theme)applyTheme(state.theme);if(state.palette)applyPalette(state.palette);window.dispatchEvent(new CustomEvent('salud:theme-change',{detail:state}));
-    const checks=getNotificationInputs();checks.forEach((el,i)=>{if(state.notifications[i]!==undefined)el.checked=state.notifications[i];});
-    if(Array.isArray(state.profileValues)) $$('input[type="text"],input[type="email"],input[type="tel"]').forEach((el,i)=>{if(state.profileValues[i]!==undefined)el.value=state.profileValues[i];});
-  }
+  function loadSaved() {
+  if (state.theme) applyTheme(state.theme);
+  if (state.palette) applyPalette(state.palette);
+
+  window.dispatchEvent(
+    new CustomEvent('salud:theme-change', {
+      detail: {
+        theme: state.theme,
+        palette: state.palette,
+        notifications: state.notifications
+      }
+    })
+  );
+
+  const checks = getNotificationInputs();
+
+  checks.forEach((el, i) => {
+    if (state.notifications[i] !== undefined) {
+      el.checked = state.notifications[i];
+    }
+  });
+}
   function wireTabs(){
     const bar=$$('main button').find(b=>norm(b.innerText).includes('apariencia y tema'))?.parentElement;
     if(!bar)return;
@@ -169,66 +205,69 @@ async function loadProfileFromSupabase() {
     return;
   }
 
-  const { data: { user }, error: authError } =
-    await client.auth.getUser();
+  try {
+    const { data: { user }, error: authError } =
+      await client.auth.getUser();
 
-  if (authError || !user) {
-    notice('Inicia sesión para consultar tu perfil.', true);
-    return;
-  }
+    if (authError) throw authError;
 
-  const { data, error } = await client
-    .from('perfiles')
-    .select('id, nombre, eps, contacto_emergencia, telefono_emergencia')
-    .eq('id', user.id)
-    .maybeSingle();
+    if (!user) {
+      notice('Inicia sesión para consultar tu perfil.', true);
+      return;
+    }
 
-  if (error) {
-    notice('No se pudo cargar el perfil: ' + error.message, true);
-    return;
-  }
+    const { data, error } = await client
+      .from('perfiles')
+      .select(`
+        id,
+        nombre,
+        documento_identidad,
+        telefono,
+        direccion,
+        eps,
+        contacto_emergencia,
+        telefono_emergencia,
+        tipo_afiliacion,
+        ips,
+        estado_afiliacion
+      `)
+      .eq('id', user.id)
+      .maybeSingle();
 
-  if (!data) {
-    notice('Todavía no tienes un perfil registrado.');
-    return;
-  }
+    if (error) throw error;
 
-  // Conserva el correo real de la cuenta de Supabase.
-  const email = user.email || '';
+    const profile = data || {};
 
-  // Guarda los datos recuperados en memoria, no en localStorage.
-  state.profile = {
-    nombre: data.nombre || '',
-    eps: data.eps || '',
-    contacto_emergencia: data.contacto_emergencia || '',
-    telefono_emergencia: data.telefono_emergencia || '',
-    email
-  };
+    const fields = {
+      'perfil-nombre': profile.nombre,
+      'perfil-cedula': profile.documento_identidad,
+      'perfil-telefono': profile.telefono,
+      'perfil-direccion': profile.direccion,
+      'perfil-correo': user.email,
+      'perfil-contacto-emergencia': profile.contacto_emergencia,
+      'perfil-telefono-emergencia': profile.telefono_emergencia,
+      'perfil-eps': profile.eps,
+      'perfil-tipo-afiliacion': profile.tipo_afiliacion,
+      'perfil-ips': profile.ips,
+      'perfil-estado-afiliacion': profile.estado_afiliacion
+    };
 
-  // Busca los campos por sus etiquetas visibles.
-  const fields = $$('main input');
+    Object.entries(fields).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.value = value || '';
+    });
 
-  const findInput = (terms) => fields.find(el => {
-    const label = norm(
-      el.getAttribute('aria-label') ||
-      el.closest('label')?.innerText ||
-      el.parentElement?.innerText ||
-      ''
+    state.profile = profile;
+
+    notice(
+      data
+        ? 'Perfil cargado desde Supabase.'
+        : 'Aún no tienes un perfil. Completa tus datos y guárdalos.'
     );
-    return terms.some(term => label.includes(term));
-  });
 
-  const nameInput = findInput(['nombre completo', 'nombre']);
-  const epsInput = findInput(['eps', 'entidad de salud']);
-  const contactInput = findInput(['contacto de emergencia']);
-  const phoneInput = findInput(['teléfono de emergencia', 'telefono de emergencia']);
-
-  if (nameInput) nameInput.value = state.profile.nombre;
-  if (epsInput) epsInput.value = state.profile.eps;
-  if (contactInput) contactInput.value = state.profile.contacto_emergencia;
-  if (phoneInput) phoneInput.value = state.profile.telefono_emergencia;
-
-  notice('Perfil cargado desde Supabase.');
+  } catch (error) {
+    notice('Error al cargar el perfil: ' + error.message, true);
+  }
 }
 
 async function saveProfileToSupabase() {
@@ -236,68 +275,107 @@ async function saveProfileToSupabase() {
 
   if (!client) {
     notice('No se pudo conectar con Supabase.', true);
-    return;
+    return false;
   }
 
-  const { data: { user }, error: authError } =
-    await client.auth.getUser();
+  try {
+    const { data: { user }, error: authError } =
+      await client.auth.getUser();
 
-  if (authError || !user) {
-    notice('Inicia sesión para guardar tu perfil.', true);
-    return;
+    if (authError) throw authError;
+
+    if (!user) {
+      notice('Inicia sesión para guardar tu perfil.', true);
+      return false;
+    }
+
+    const getValue = (id) =>
+      document.getElementById(id)?.value.trim() || '';
+
+    const payload = {
+      id: user.id,
+      nombre: getValue('perfil-nombre'),
+      documento_identidad: getValue('perfil-cedula'),
+      telefono: getValue('perfil-telefono'),
+      direccion: getValue('perfil-direccion'),
+      eps: getValue('perfil-eps'),
+      contacto_emergencia: getValue('perfil-contacto-emergencia'),
+      telefono_emergencia: getValue('perfil-telefono-emergencia'),
+      tipo_afiliacion: getValue('perfil-tipo-afiliacion'),
+      ips: getValue('perfil-ips'),
+      estado_afiliacion: getValue('perfil-estado-afiliacion'),
+      actualizado_en: new Date().toISOString()
+    };
+
+    const { error } = await client
+      .from('perfiles')
+      .upsert(payload, { onConflict: 'id' });
+
+    if (error) throw error;
+
+    state.profile = payload;
+
+    notice('¡Perfil guardado correctamente en Supabase!');
+    return true;
+
+  } catch (error) {
+    notice('No se pudo guardar el perfil: ' + error.message, true);
+    return false;
   }
+}
+  function wireActions() {
+  const saveButtons = $$('button').filter(b =>
+    /guardar preferencias|guardar cambios/i.test(b.innerText)
+  );
 
-  const fields = $$('main input');
-
-  const findInput = (terms) => fields.find(el => {
-    const label = norm(
-      el.getAttribute('aria-label') ||
-      el.closest('label')?.innerText ||
-      el.parentElement?.innerText ||
-      ''
-    );
-    return terms.some(term => label.includes(term));
+  saveButtons.forEach(button => {
+    button.addEventListener('click', save);
   });
 
-  const nameInput = findInput(['nombre completo', 'nombre']);
-  const epsInput = findInput(['eps', 'entidad de salud']);
-  const contactInput = findInput(['contacto de emergencia']);
-  const phoneInput = findInput(['teléfono de emergencia', 'telefono de emergencia']);
+  const reset = buttonByText('Restablecer');
 
-  const payload = {
-    id: user.id,
-    nombre: nameInput?.value.trim() || '',
-    eps: epsInput?.value.trim() || '',
-    contacto_emergencia: contactInput?.value.trim() || '',
-    telefono_emergencia: phoneInput?.value.trim() || '',
-    actualizado_en: new Date().toISOString()
-  };
-
-  const { error } = await client
-    .from('perfiles')
-    .upsert(payload, { onConflict: 'id' });
-
-  if (error) {
-    notice('No se pudo guardar el perfil: ' + error.message, true);
-    return;
+  if (reset) {
+    reset.addEventListener('click', restore);
   }
 
-  state.profile = { ...payload, email: user.email || '' };
-  notice('Perfil personal sincronizado con Supabase.');
-  await loadProfileFromSupabase();
-}
-  function wireActions(){
-    const saveButtons=$$('button').filter(b=>/guardar preferencias|guardar cambios/i.test(b.innerText));saveButtons.forEach(b=>b.addEventListener('click',save));
-    const reset=buttonByText('Restablecer');if(reset)reset.addEventListener('click',restore);
-    const discard=buttonByText('Descartar');if(discard)discard.addEventListener('click',()=>{try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');state={...defaults,...saved};loadSaved();notice('Se descartaron los cambios no guardados.');}catch(e){restore();}});
-    getNotificationInputs().forEach(el=>el.addEventListener('change',markDirty));
-    $$('input[type="text"],input[type="email"],input[type="tel"]').forEach(el=>el.addEventListener('input',markDirty));
-    wirePassword();const saveProfileButton = buttonByText('Guardar perfil');
+  const discard = buttonByText('Descartar');
 
-if (saveProfileButton) {
-  saveProfileButton.addEventListener('click', saveProfileToSupabase);
-}
+  if (discard) {
+    discard.addEventListener('click', async () => {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(KEY) || '{}'
+        );
+
+        state = {
+          ...defaults,
+          theme: saved.theme || defaults.theme,
+          palette: saved.palette || defaults.palette,
+          notifications: saved.notifications || defaults.notifications
+        };
+
+        loadSaved();
+        await loadProfileFromSupabase();
+
+        notice('Se restauraron los últimos datos guardados.');
+      } catch (error) {
+        notice('No se pudieron recuperar los datos.', true);
+      }
+    });
   }
+
+  getNotificationInputs().forEach(el => {
+    el.addEventListener('change', markDirty);
+  });
+
+  $$('input').forEach(el => {
+    if (el.id.startsWith('perfil-')) {
+      el.addEventListener('input', markDirty);
+    }
+  });
+
+  wirePassword();
+}
 document.addEventListener('DOMContentLoaded', async () => {
   loadSaved();
   wireTabs();
