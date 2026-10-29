@@ -106,52 +106,112 @@ async function loadRows(kind, orderField) {
   function renderPage() {
     $('#salud-db-panel')?.remove();const path=page();const main=$('main')||document.body;const panel=document.createElement('section');panel.id='salud-db-panel';panel.style.cssText='max-width:1100px;margin:20px auto;padding:0 18px 30px;box-sizing:border-box;width:100%;color:#172033';
     let html='';
-    if(path==='index.html'||path==='' ) {
-      const last=db.measures[0], upcoming=db.appointments.filter(a=>a.estado!=='Cancelada'&&a.fecha>=today()).sort((x,y)=>(x.fecha+(x.hora||'')).localeCompare(y.fecha+(y.hora||'')));
-      html+=card('Mis datos guardados en la nube',`<p style="color:#64748b;margin-bottom:10px">Cuenta: ${esc(user.email)}. Estos registros se sincronizan al iniciar sesión en otro dispositivo.</p><div id="salud-actions"></div>`);
-      html+=card('Última medida',last?`<p><strong>Fecha:</strong> ${esc(last.fecha)} · <strong>Peso:</strong> ${esc(last.peso??'—')} kg · <strong>Presión:</strong> ${esc(last.presion_sistolica??'—')}/${esc(last.presion_diastolica??'—')} · <strong>Pulso:</strong> ${esc(last.pulso??'—')} · <strong>Temperatura:</strong> ${esc(last.temperatura??'—')} °C</p><p style="color:#64748b;margin-top:6px">${esc(last.notas||'Sin notas')}</p>`:'Aún no has guardado medidas.');
-      html+=card('Próximas citas',recordList(upcoming,'appointments',r=>r.motivo, r=>`${r.fecha} ${r.hora||''} · ${r.profesional} · ${r.estado}`));
-      
-      // Medicamentos registrados en Supabase
-      const activeMeds = db.medications.filter(m => m.activo);
+  
+if (path === 'index.html' || path === '') {
+  const last = db.measures[0];
 
-      html += card(
-        'Mis medicamentos',
-        recordList(
-          activeMeds,
-          'medications',
-          m => m.nombre,
-          m => `${m.dosis || 'Sin dosis indicada'} · ${m.frecuencia || 'Sin frecuencia indicada'}`
-        )
-      );
+  const upcoming = db.appointments
+    .filter(a => a.estado !== 'Cancelada' && a.fecha >= today())
+    .sort((x, y) =>
+      (x.fecha + (x.hora || '')).localeCompare(y.fecha + (y.hora || ''))
+    );
 
-      // Órdenes y autorizaciones registradas
-      html += card(
-        'Órdenes y autorizaciones',
-        recordList(
-          db.orders,
-          'orders',
-          o => o.nombre,
-          o => `${o.fecha || 'Sin fecha'} · ${o.estado}`
-        )
-      );
+  const activeMeds = db.medications.filter(m => m.activo);
+  const profile = db.profile || {};
 
-      // Perfil real del usuario
-      const profile = db.profile || {};
+  // Columna izquierda: cuenta, citas y medicamentos
+  let leftHtml = '';
 
-      html += card(
-        'Mi perfil',
-        `<p><strong>Nombre:</strong> ${esc(profile.nombre || 'Sin registrar')}</p>
-         <p><strong>EPS:</strong> ${esc(profile.eps || 'Sin registrar')}</p>
-         <p><strong>Contacto de emergencia:</strong> ${esc(profile.contacto_emergencia || 'Sin registrar')}</p>
-         <p><strong>Teléfono de emergencia:</strong> ${esc(profile.telefono_emergencia || 'Sin registrar')}</p>
-         <p style="margin-top:10px">
-           <a href="ajustes.html" style="color:#0d47a1;font-weight:600">Editar mi perfil</a>
-         </p>`
-      );
+  leftHtml += card(
+    'Mis datos guardados en la nube',
+    `<p style="color:#64748b;margin-bottom:10px">
+      Cuenta: ${esc(user.email)}. Tus registros se sincronizan al iniciar sesión en otro dispositivo.
+    </p>
+    <div id="salud-actions"></div>`
+  );
 
-      panel.innerHTML=html;main.append(panel);$('#salud-actions',panel).append(button('＋ Registrar medida',addMeasure),button('＋ Nueva cita',addAppointment));bindDeletes(panel);return;
-    }
+  leftHtml += card(
+    'Próximas citas',
+    recordList(
+      upcoming,
+      'appointments',
+      r => r.motivo || 'Cita médica',
+      r => `${r.fecha} ${r.hora || ''} · ${r.profesional || 'Profesional no indicado'} · ${r.estado || 'Programada'}`
+    )
+  );
+
+  leftHtml += card(
+    'Mis medicamentos',
+    recordList(
+      activeMeds,
+      'medications',
+      m => m.nombre,
+      m => `${m.dosis || 'Sin dosis indicada'} · ${m.frecuencia || 'Sin frecuencia indicada'}`
+    )
+  );
+
+  // Columna derecha: medidas, órdenes y perfil
+  let rightHtml = '';
+
+  rightHtml += card(
+    'Última medida',
+    last
+      ? `<p><strong>Fecha:</strong> ${esc(last.fecha || '—')}</p>
+         <p style="margin-top:8px"><strong>Peso:</strong> ${esc(last.peso ?? '—')} kg</p>
+         <p style="margin-top:8px"><strong>Presión arterial:</strong> ${esc(last.presion_sistolica ?? '—')}/${esc(last.presion_diastolica ?? '—')}</p>
+         <p style="margin-top:8px"><strong>Pulso:</strong> ${esc(last.pulso ?? '—')}</p>
+         <p style="margin-top:8px"><strong>Temperatura:</strong> ${esc(last.temperatura ?? '—')} °C</p>
+         <p style="color:#64748b;margin-top:10px">${esc(last.notas || 'Sin notas')}</p>`
+      : '<p style="color:#64748b">Aún no has guardado medidas.</p>'
+  );
+
+  rightHtml += card(
+    'Órdenes y autorizaciones',
+    recordList(
+      db.orders,
+      'orders',
+      o => o.nombre,
+      o => `${o.fecha || 'Sin fecha'} · ${o.estado || 'Pendiente'}`
+    )
+  );
+
+  rightHtml += card(
+    'Mi perfil',
+    `<p><strong>Nombre:</strong> ${esc(profile.nombre || 'Sin registrar')}</p>
+     <p style="margin-top:8px"><strong>EPS:</strong> ${esc(profile.eps || 'Sin registrar')}</p>
+     <p style="margin-top:8px"><strong>Contacto de emergencia:</strong> ${esc(profile.contacto_emergencia || 'Sin registrar')}</p>
+     <p style="margin-top:8px"><strong>Teléfono de emergencia:</strong> ${esc(profile.telefono_emergencia || 'Sin registrar')}</p>
+     <p style="margin-top:12px">
+       <a href="ajustes.html" style="color:#0d47a1;font-weight:600">Editar mi perfil</a>
+     </p>`
+  );
+
+  // Distribución adaptable a escritorio y móvil
+  panel.style.maxWidth = '1200px';
+
+  panel.innerHTML = `
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+      gap:0 10px;
+      align-items:start;
+    ">
+      <div style="min-width:0">${leftHtml}</div>
+      <div style="min-width:0">${rightHtml}</div>
+    </div>
+  `;
+
+  main.append(panel);
+
+  $('#salud-actions', panel).append(
+    button('＋ Registrar medida', addMeasure),
+    button('＋ Nueva cita', addAppointment)
+  );
+
+  bindDeletes(panel);
+  return;
+}
+
     if(path.includes('calendario')) {
       const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth();
       const monthName=new Intl.DateTimeFormat('es-CO',{month:'long',year:'numeric'}).format(calendarCursor);
