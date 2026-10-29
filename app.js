@@ -12,7 +12,32 @@ const today = () => {
   const table = { measures:'medidas_salud', appointments:'citas', medications:'medicamentos', orders:'ordenes_salud' };
   const page = () => (location.pathname.split('/').pop() || 'index.html').toLowerCase();
   function toast(text, bad=false) { let n=$('#salud-toast'); if(!n){n=document.createElement('div');n.id='salud-toast';n.style.cssText='position:fixed;bottom:18px;right:18px;z-index:10001;padding:12px 16px;border-radius:12px;background:#0d47a1;color:white;box-shadow:0 8px 24px #0003;max-width:min(90vw,520px)';document.body.append(n);} n.style.background=bad?'#b42318':'#0d47a1';n.textContent=text;n.hidden=false;clearTimeout(window.__saludToastTimer);window.__saludToastTimer=setTimeout(()=>n.hidden=true,4500); }
-  function card(title, html) { return `<section style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:18px;margin:16px 0;color:#172033"><h2 style="font-size:20px;font-weight:700;margin:0 0 12px">${esc(title)}</h2>${html}</section>`; }
+ 
+function card(title, html) {
+  return `
+    <section class="salud-dashboard-card" style="
+      background: var(--surface-container, #ecedef);
+      border: 1px solid #e0e5eb;
+      border-radius: 20px;
+      padding: 24px;
+      margin: 16px 0;
+      color: #172033;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      box-sizing: border-box;
+    ">
+      <h2 style="
+        font-family: Inter, sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin: 0 0 16px;
+        color: var(--primary, #0d47a1);
+      ">${esc(title)}</h2>
+      <div class="salud-dashboard-card-content">
+        ${html}
+      </div>
+    </section>`;
+}
   const input=(label,name,type='text',required=false,attrs='')=>`<label style="display:grid;gap:5px;font-size:14px;font-weight:600">${esc(label)}<input name="${name}" type="${type}" ${required?'required':''} ${attrs} style="padding:10px;border:1px solid #cbd5e1;border-radius:9px;width:100%;box-sizing:border-box;font-weight:400"></label>`;
   const textarea=(label,name)=>`<label style="display:grid;gap:5px;font-size:14px;font-weight:600">${esc(label)}<textarea name="${name}" rows="2" style="padding:10px;border:1px solid #cbd5e1;border-radius:9px;width:100%;box-sizing:border-box;font-weight:400"></textarea></label>`;
   function formModal(title, fields, submitLabel, onSubmit) {
