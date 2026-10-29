@@ -161,13 +161,147 @@ card.onclick = () => {
       b.disabled=true;try{const {error}=await client.auth.updateUser({password:p1});if(error)throw error;notice('Contraseña actualizada correctamente en Supabase.');}catch(e){notice('No se pudo actualizar la contraseña: '+(e.message||'error desconocido'),true);}finally{b.disabled=false;}
     });
   }
+async function loadProfileFromSupabase() {
+  const client = window.saludSupabase;
+
+  if (!client) {
+    notice('No se pudo conectar con Supabase.', true);
+    return;
+  }
+
+  const { data: { user }, error: authError } =
+    await client.auth.getUser();
+
+  if (authError || !user) {
+    notice('Inicia sesión para consultar tu perfil.', true);
+    return;
+  }
+
+  const { data, error } = await client
+    .from('perfiles')
+    .select('id, nombre, eps, contacto_emergencia, telefono_emergencia')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    notice('No se pudo cargar el perfil: ' + error.message, true);
+    return;
+  }
+
+  if (!data) {
+    notice('Todavía no tienes un perfil registrado.');
+    return;
+  }
+
+  // Conserva el correo real de la cuenta de Supabase.
+  const email = user.email || '';
+
+  // Guarda los datos recuperados en memoria, no en localStorage.
+  state.profile = {
+    nombre: data.nombre || '',
+    eps: data.eps || '',
+    contacto_emergencia: data.contacto_emergencia || '',
+    telefono_emergencia: data.telefono_emergencia || '',
+    email
+  };
+
+  // Busca los campos por sus etiquetas visibles.
+  const fields = $$('main input');
+
+  const findInput = (terms) => fields.find(el => {
+    const label = norm(
+      el.getAttribute('aria-label') ||
+      el.closest('label')?.innerText ||
+      el.parentElement?.innerText ||
+      ''
+    );
+    return terms.some(term => label.includes(term));
+  });
+
+  const nameInput = findInput(['nombre completo', 'nombre']);
+  const epsInput = findInput(['eps', 'entidad de salud']);
+  const contactInput = findInput(['contacto de emergencia']);
+  const phoneInput = findInput(['teléfono de emergencia', 'telefono de emergencia']);
+
+  if (nameInput) nameInput.value = state.profile.nombre;
+  if (epsInput) epsInput.value = state.profile.eps;
+  if (contactInput) contactInput.value = state.profile.contacto_emergencia;
+  if (phoneInput) phoneInput.value = state.profile.telefono_emergencia;
+
+  notice('Perfil cargado desde Supabase.');
+}
+
+async function saveProfileToSupabase() {
+  const client = window.saludSupabase;
+
+  if (!client) {
+    notice('No se pudo conectar con Supabase.', true);
+    return;
+  }
+
+  const { data: { user }, error: authError } =
+    await client.auth.getUser();
+
+  if (authError || !user) {
+    notice('Inicia sesión para guardar tu perfil.', true);
+    return;
+  }
+
+  const fields = $$('main input');
+
+  const findInput = (terms) => fields.find(el => {
+    const label = norm(
+      el.getAttribute('aria-label') ||
+      el.closest('label')?.innerText ||
+      el.parentElement?.innerText ||
+      ''
+    );
+    return terms.some(term => label.includes(term));
+  });
+
+  const nameInput = findInput(['nombre completo', 'nombre']);
+  const epsInput = findInput(['eps', 'entidad de salud']);
+  const contactInput = findInput(['contacto de emergencia']);
+  const phoneInput = findInput(['teléfono de emergencia', 'telefono de emergencia']);
+
+  const payload = {
+    id: user.id,
+    nombre: nameInput?.value.trim() || '',
+    eps: epsInput?.value.trim() || '',
+    contacto_emergencia: contactInput?.value.trim() || '',
+    telefono_emergencia: phoneInput?.value.trim() || '',
+    actualizado_en: new Date().toISOString()
+  };
+
+  const { error } = await client
+    .from('perfiles')
+    .upsert(payload, { onConflict: 'id' });
+
+  if (error) {
+    notice('No se pudo guardar el perfil: ' + error.message, true);
+    return;
+  }
+
+  state.profile = { ...payload, email: user.email || '' };
+  notice('Perfil personal sincronizado con Supabase.');
+  await loadProfileFromSupabase();
+}
   function wireActions(){
     const saveButtons=$$('button').filter(b=>/guardar preferencias|guardar cambios/i.test(b.innerText));saveButtons.forEach(b=>b.addEventListener('click',save));
     const reset=buttonByText('Restablecer');if(reset)reset.addEventListener('click',restore);
     const discard=buttonByText('Descartar');if(discard)discard.addEventListener('click',()=>{try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');state={...defaults,...saved};loadSaved();notice('Se descartaron los cambios no guardados.');}catch(e){restore();}});
     getNotificationInputs().forEach(el=>el.addEventListener('change',markDirty));
     $$('input[type="text"],input[type="email"],input[type="tel"]').forEach(el=>el.addEventListener('input',markDirty));
-    wirePassword();
+    wirePassword();const saveProfileButton = buttonByText('Guardar perfil');
+
+if (saveProfileButton) {
+  saveProfileButton.addEventListener('click', saveProfileToSupabase);
+}
   }
-  document.addEventListener('DOMContentLoaded',()=>{loadSaved();wireTabs();wireActions();});
+document.addEventListener('DOMContentLoaded', async () => {
+  loadSaved();
+  wireTabs();
+  wireActions();
+  await loadProfileFromSupabase();
+});
 })();
